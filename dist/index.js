@@ -11,8 +11,11 @@ __nccwpck_require__.r(__webpack_exports__);
 /* harmony import */ var _actions_exec__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_exec__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(1017);
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(path__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(7147);
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__nccwpck_require__.n(fs__WEBPACK_IMPORTED_MODULE_2__);
 const core = __nccwpck_require__(7820);
 const github = __nccwpck_require__(3737);
+
 
 
 
@@ -24,7 +27,7 @@ try {
   core.setOutput("time", time);
 
   // Create jest command
-  const jestCmd = "npm test -- --ci --json --coverage --testLocationInResults --outputFile=report.json";
+  const jestCmd = "npm test sortingSaga -- --ci --json --coverage --testLocationInResults --outputFile=report.json";
   console.log("jestCommand -> ", jestCmd);
 
   try {
@@ -32,6 +35,8 @@ try {
     const cwd = process.cwd();
     const resultFilePath = (0,path__WEBPACK_IMPORTED_MODULE_1__.join)(cwd, "report.json");
     console.log("resultFilePath -> ", resultFilePath);
+    const results = JSON.parse((0,fs__WEBPACK_IMPORTED_MODULE_2__.readFileSync)(resultsFile, "utf-8"))
+    console.debug("Jest results: %j", results)
   } catch(error) {
     console.error("Something went wrong", error.message);
   }

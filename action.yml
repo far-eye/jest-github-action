@@ -5,6 +5,10 @@ inputs:
     description: 'Who to greet'
     required: true
     default: 'World'
+  github-token:
+    required: true
+    description: 'A github access token'
+    default: ${{ github.token }}
 outputs:
   time: # id of output
     description: 'The time we greeted you'

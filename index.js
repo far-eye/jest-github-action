@@ -1,5 +1,5 @@
-const core = require('@actions/core');
-const github = require('@actions/github');
+import { getInput, core } from '@actions/core';
+import { GitHub, context, getOctokit } from "@actions/github"
 import { exec } from "@actions/exec"
 import { sep, join, resolve } from "path"
 import { readFileSync } from "fs"
@@ -15,17 +15,34 @@ try {
   const jestCmd = "npm test sortingSaga -- --ci --json --coverage --testLocationInResults --outputFile=report.json";
   console.log("jestCommand -> ", jestCmd);
 
-  try {
-    await exec(jestCmd);
-    const cwd = process.cwd();
-    const resultFilePath = join(cwd, "report.json");
-    console.log("resultFilePath -> ", resultFilePath);
-    const results = JSON.parse(readFileSync(resultFilePath, "utf-8"))
-    console.debug("Jest results: %j", results)
-  } catch(error) {
-    console.error("Something went wrong", error.message);
+  await exec(jestCmd);
+  const cwd = process.cwd();
+  const resultFilePath = join(cwd, "report.json");
+  console.log("resultFilePath -> ", resultFilePath);
+  const results = JSON.parse(readFileSync(resultFilePath, "utf-8"))
+  console.debug("Jest results: %j", results)
+  const payload = {
+    ...context.repo,
+    head_sha: context.payload.pull_request?.head.sha ?? context.sha,
+    name: core.getInput("check-name", { required: false }) || ACTION_NAME,
+    status: "completed",
+    conclusion: results.success ? "success" : "failure",
+    output: {
+      title: results.success ? "Jest tests passed" : "Jest tests failed",
+      text: results.success ? "All " + results.numTotalTests + " test cases passed." : results.numFailedTestSuites + " test cases failed out of " + results.numTotalTests,
+      summary: results.success
+        ? `${results.numPassedTests} tests passing in ${results.numPassedTestSuites
+        } suite${results.numPassedTestSuites > 1 ? "s" : ""}.`
+        : `Failed tests: ${results.numFailedTests}/${results.numTotalTests}. Failed suites: ${results.numFailedTests}/${results.numTotalTestSuites}.`,
+    }
   }
+  const token = getInput('github-token', {
+    required: true,
+  });
+  const octokit = getOctokit(token);
+  await octokit.rest.checks.create(payload)
 
 } catch (error) {
   core.setFailed(error.message);
+  core.setFailed(error.message)
 }

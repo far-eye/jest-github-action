@@ -16,7 +16,7 @@ try {
   console.log("jestCommand -> ", jestCmd);
   const cwd = process.cwd();
   const CWD = cwd + sep
-  await exec(jestCmd,[], {cwd: CWD});
+  await exec(jestCmd, [], { silent: true, cwd: CWD });
   console.debug("jext command executed");
   
   const resultFilePath = join(CWD, "report.json");

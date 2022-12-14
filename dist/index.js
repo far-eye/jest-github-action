@@ -33,7 +33,7 @@ try {
   console.log("jestCommand -> ", jestCmd);
   const cwd = process.cwd();
   const CWD = cwd + path__WEBPACK_IMPORTED_MODULE_2__.sep
-  await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(jestCmd,[], {cwd: CWD});
+  await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(jestCmd, [], { silent: true, cwd: CWD });
   console.debug("jext command executed");
   
   const resultFilePath = (0,path__WEBPACK_IMPORTED_MODULE_2__.join)(CWD, "report.json");

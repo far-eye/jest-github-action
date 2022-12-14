@@ -37,33 +37,34 @@ try {
   const resultFilePath = (0,path__WEBPACK_IMPORTED_MODULE_2__.join)(cwd, "report.json");
   console.log("resultFilePath -> ", resultFilePath);
   const results = JSON.parse((0,fs__WEBPACK_IMPORTED_MODULE_3__.readFileSync)(resultFilePath, "utf-8"))
-  const payload = {
-    ..._actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
-    head_sha: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.head.sha ?? _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.sha,
-    name: "jest-github-action-test",
-    status: "completed",
-    conclusion: results.success ? "success" : "failure",
-    output: {
-      title: results.success ? "Jest tests passed" : "Jest tests failed",
-      text: results.success ? "All " + results.numTotalTests + " test cases passed." : results.numFailedTestSuites + " test cases failed out of " + results.numTotalTests,
-      summary: results.success
-        ? `${results.numPassedTests} tests passing in ${results.numPassedTestSuites
-        } suite${results.numPassedTestSuites > 1 ? "s" : ""}.`
-        : `Failed tests: ${results.numFailedTests}/${results.numTotalTests}. Failed suites: ${results.numFailedTests}/${results.numTotalTestSuites}.`,
-    }
-  }
-  console.debug({payload});
-  const token = core.getInput('github-token', {
-    required: true,
-  });
-  const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit)(token);
-  await octokit.rest.checks.create(payload)
-  const commentPayload = {
-    ..._actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
-    body: payload.output.summary,
-    issue_number: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.number ?? 0
-  }
-  await octokit.rest.issues.createComment(commentPayload);
+  console.debug({results});
+  // const payload = {
+  //   ...context.repo,
+  //   head_sha: context.payload.pull_request?.head.sha ?? context.sha,
+  //   name: "jest-github-action-test",
+  //   status: "completed",
+  //   conclusion: results.success ? "success" : "failure",
+  //   output: {
+  //     title: results.success ? "Jest tests passed" : "Jest tests failed",
+  //     text: results.success ? "All " + results.numTotalTests + " test cases passed." : results.numFailedTestSuites + " test cases failed out of " + results.numTotalTests,
+  //     summary: results.success
+  //       ? `${results.numPassedTests} tests passing in ${results.numPassedTestSuites
+  //       } suite${results.numPassedTestSuites > 1 ? "s" : ""}.`
+  //       : `Failed tests: ${results.numFailedTests}/${results.numTotalTests}. Failed suites: ${results.numFailedTests}/${results.numTotalTestSuites}.`,
+  //   }
+  // }
+  // console.debug({payload});
+  // const token = core.getInput('github-token', {
+  //   required: true,
+  // });
+  // const octokit = getOctokit(token);
+  // await octokit.rest.checks.create(payload)
+  // const commentPayload = {
+  //   ...context.repo,
+  //   body: payload.output.summary,
+  //   issue_number: context.payload.pull_request?.number ?? 0
+  // }
+  // await octokit.rest.issues.createComment(commentPayload);
 
 } catch (error) {
   console.log("error->", error.message);

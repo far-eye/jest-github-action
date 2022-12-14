@@ -37,11 +37,10 @@ try {
   const resultFilePath = (0,path__WEBPACK_IMPORTED_MODULE_2__.join)(cwd, "report.json");
   console.log("resultFilePath -> ", resultFilePath);
   const results = JSON.parse((0,fs__WEBPACK_IMPORTED_MODULE_3__.readFileSync)(resultFilePath, "utf-8"))
-  console.debug("Jest results: %j", results)
   const payload = {
     ..._actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
     head_sha: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.head.sha ?? _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.sha,
-    name: core.getInput("check-name", { required: false }) || ACTION_NAME,
+    name: "jest-github-action-test",
     status: "completed",
     conclusion: results.success ? "success" : "failure",
     output: {
@@ -54,11 +53,11 @@ try {
     }
   }
   console.debug({payload});
-  // const token = core.getInput('github-token', {
-  //   required: true,
-  // });
-  // const octokit = getOctokit(token);
-  // await octokit.rest.checks.create(payload)
+  const token = core.getInput('github-token', {
+    required: true,
+  });
+  const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit)(token);
+  await octokit.rest.checks.create(payload)
 
 } catch (error) {
   core.setFailed(error.message);

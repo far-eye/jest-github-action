@@ -20,11 +20,10 @@ try {
   const resultFilePath = join(cwd, "report.json");
   console.log("resultFilePath -> ", resultFilePath);
   const results = JSON.parse(readFileSync(resultFilePath, "utf-8"))
-  console.debug("Jest results: %j", results)
   const payload = {
     ...context.repo,
     head_sha: context.payload.pull_request?.head.sha ?? context.sha,
-    name: core.getInput("check-name", { required: false }) || ACTION_NAME,
+    name: "jest-github-action-test",
     status: "completed",
     conclusion: results.success ? "success" : "failure",
     output: {
@@ -37,11 +36,11 @@ try {
     }
   }
   console.debug({payload});
-  // const token = core.getInput('github-token', {
-  //   required: true,
-  // });
-  // const octokit = getOctokit(token);
-  // await octokit.rest.checks.create(payload)
+  const token = core.getInput('github-token', {
+    required: true,
+  });
+  const octokit = getOctokit(token);
+  await octokit.rest.checks.create(payload)
 
 } catch (error) {
   core.setFailed(error.message);

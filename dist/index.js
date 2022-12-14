@@ -29,10 +29,11 @@ try {
   core.setOutput("time", time);
 
   // Create jest command
-  const jestCmd = "npm test sortingSaga -- --ci --json --coverage --testLocationInResults --outputFile=report.json";
+  const jestCmd = "npm test sortingSaga languageSaga -- --ci --json --coverage --testLocationInResults --outputFile=report.json";
   console.log("jestCommand -> ", jestCmd);
 
   await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(jestCmd);
+  console.debug("jext command executed");
   const cwd = process.cwd();
   const resultFilePath = (0,path__WEBPACK_IMPORTED_MODULE_2__.join)(cwd, "report.json");
   console.log("resultFilePath -> ", resultFilePath);

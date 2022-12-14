@@ -12,10 +12,11 @@ try {
   core.setOutput("time", time);
 
   // Create jest command
-  const jestCmd = "npm test sortingSaga -- --ci --json --coverage --testLocationInResults --outputFile=report.json";
+  const jestCmd = "npm test sortingSaga languageSaga -- --ci --json --coverage --testLocationInResults --outputFile=report.json";
   console.log("jestCommand -> ", jestCmd);
 
   await exec(jestCmd);
+  console.debug("jext command executed");
   const cwd = process.cwd();
   const resultFilePath = join(cwd, "report.json");
   console.log("resultFilePath -> ", resultFilePath);

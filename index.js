@@ -1,6 +1,7 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 import { exec } from "@actions/exec"
+import { sep, join, resolve } from "path"
 
 try {
   // `who-to-greet` input defined in action metadata file
@@ -15,6 +16,9 @@ try {
 
   try {
     await exec(jestCmd);
+    const cwd = process.cwd();
+    const resultFilePath = join(cwd, "report.json");
+    console.log("resultFilePath -> ", resultFilePath);
   } catch(error) {
     console.error("Something went wrong", error.message);
   }

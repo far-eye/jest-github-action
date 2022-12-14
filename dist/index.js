@@ -9,8 +9,11 @@ __nccwpck_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 __nccwpck_require__.r(__webpack_exports__);
 /* harmony import */ var _actions_exec__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(5574);
 /* harmony import */ var _actions_exec__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_exec__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(1017);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(path__WEBPACK_IMPORTED_MODULE_1__);
 const core = __nccwpck_require__(7820);
 const github = __nccwpck_require__(3737);
+
 
 
 try {
@@ -26,6 +29,9 @@ try {
 
   try {
     await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_0__.exec)(jestCmd);
+    const cwd = process.cwd();
+    const resultFilePath = (0,path__WEBPACK_IMPORTED_MODULE_1__.join)(cwd, "report.json");
+    console.log("resultFilePath -> ", resultFilePath);
   } catch(error) {
     console.error("Something went wrong", error.message);
   }

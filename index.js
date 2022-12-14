@@ -20,7 +20,7 @@ try {
     const cwd = process.cwd();
     const resultFilePath = join(cwd, "report.json");
     console.log("resultFilePath -> ", resultFilePath);
-    const results = JSON.parse(readFileSync(resultsFile, "utf-8"))
+    const results = JSON.parse(readFileSync(resultFilePath, "utf-8"))
     console.debug("Jest results: %j", results)
   } catch(error) {
     console.error("Something went wrong", error.message);

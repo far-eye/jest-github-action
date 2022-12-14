@@ -35,7 +35,7 @@ try {
     const cwd = process.cwd();
     const resultFilePath = (0,path__WEBPACK_IMPORTED_MODULE_1__.join)(cwd, "report.json");
     console.log("resultFilePath -> ", resultFilePath);
-    const results = JSON.parse((0,fs__WEBPACK_IMPORTED_MODULE_2__.readFileSync)(resultsFile, "utf-8"))
+    const results = JSON.parse((0,fs__WEBPACK_IMPORTED_MODULE_2__.readFileSync)(resultFilePath, "utf-8"))
     console.debug("Jest results: %j", results)
   } catch(error) {
     console.error("Something went wrong", error.message);

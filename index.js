@@ -1,7 +1,5 @@
 const core = require('@actions/core');
-const getInput = require('@actions/core');
-
-import { GitHub, context, getOctokit } from "@actions/github"
+import { context, getOctokit } from "@actions/github"
 import { exec } from "@actions/exec"
 import { sep, join, resolve } from "path"
 import { readFileSync } from "fs"
@@ -38,11 +36,12 @@ try {
         : `Failed tests: ${results.numFailedTests}/${results.numTotalTests}. Failed suites: ${results.numFailedTests}/${results.numTotalTestSuites}.`,
     }
   }
-  const token = getInput('github-token', {
-    required: true,
-  });
-  const octokit = getOctokit(token);
-  await octokit.rest.checks.create(payload)
+  console.debug({payload});
+  // const token = core.getInput('github-token', {
+  //   required: true,
+  // });
+  // const octokit = getOctokit(token);
+  // await octokit.rest.checks.create(payload)
 
 } catch (error) {
   core.setFailed(error.message);

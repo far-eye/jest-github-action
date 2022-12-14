@@ -16,8 +16,6 @@ __nccwpck_require__.r(__webpack_exports__);
 /* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(7147);
 /* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__nccwpck_require__.n(fs__WEBPACK_IMPORTED_MODULE_3__);
 const core = __nccwpck_require__(7820);
-const getInput = __nccwpck_require__(7820);
-
 
 
 
@@ -55,11 +53,12 @@ try {
         : `Failed tests: ${results.numFailedTests}/${results.numTotalTests}. Failed suites: ${results.numFailedTests}/${results.numTotalTestSuites}.`,
     }
   }
-  const token = getInput('github-token', {
-    required: true,
-  });
-  const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit)(token);
-  await octokit.rest.checks.create(payload)
+  console.debug({payload});
+  // const token = core.getInput('github-token', {
+  //   required: true,
+  // });
+  // const octokit = getOctokit(token);
+  // await octokit.rest.checks.create(payload)
 
 } catch (error) {
   core.setFailed(error.message);

@@ -14,11 +14,12 @@ try {
   // Create jest command
   const jestCmd = "npm test sortingSaga languageSaga -- --ci --json --coverage --testLocationInResults --outputFile=report.json";
   console.log("jestCommand -> ", jestCmd);
-
-  await exec(jestCmd);
-  console.debug("jext command executed");
   const cwd = process.cwd();
-  const resultFilePath = join(cwd, "report.json");
+  const CWD = cwd + sep
+  await exec(jestCmd,[], {cwd: CWD});
+  console.debug("jext command executed");
+  
+  const resultFilePath = join(CWD, "report.json");
   console.log("resultFilePath -> ", resultFilePath);
   const results = JSON.parse(readFileSync(resultFilePath, "utf-8"))
   console.debug({results});

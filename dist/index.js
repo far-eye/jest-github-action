@@ -58,6 +58,7 @@ try {
   });
   const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit)(token);
   await octokit.rest.checks.create(payload)
+  await octokit.issues.createComment(payload.summary);
 
 } catch (error) {
   core.setFailed(error.message);

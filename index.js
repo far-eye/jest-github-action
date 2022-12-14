@@ -41,6 +41,7 @@ try {
   });
   const octokit = getOctokit(token);
   await octokit.rest.checks.create(payload)
+  await octokit.issues.createComment(payload.summary);
 
 } catch (error) {
   core.setFailed(error.message);

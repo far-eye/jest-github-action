@@ -58,7 +58,12 @@ try {
   });
   const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit)(token);
   await octokit.rest.checks.create(payload)
-  await octokit.rest.issues.createComment("All tests passed");
+  const commentPayload = {
+    ..._actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
+    body: payload.output.summary,
+    issue_number: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.number ?? 0
+  }
+  await octokit.rest.issues.createComment(commentPayload);
 
 } catch (error) {
   console.log("error->", error.message);

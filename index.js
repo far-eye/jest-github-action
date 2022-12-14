@@ -41,7 +41,12 @@ try {
   });
   const octokit = getOctokit(token);
   await octokit.rest.checks.create(payload)
-  await octokit.rest.issues.createComment("All tests passed");
+  const commentPayload = {
+    ...context.repo,
+    body: payload.output.summary,
+    issue_number: context.payload.pull_request?.number ?? 0
+  }
+  await octokit.rest.issues.createComment(commentPayload);
 
 } catch (error) {
   console.log("error->", error.message);

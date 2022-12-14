@@ -7,16 +7,16 @@
 "use strict";
 __nccwpck_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
 __nccwpck_require__.r(__webpack_exports__);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(7820);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(3737);
-/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _actions_exec__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(5574);
-/* harmony import */ var _actions_exec__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__nccwpck_require__.n(_actions_exec__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(1017);
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__nccwpck_require__.n(path__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(7147);
-/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__nccwpck_require__.n(fs__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(3737);
+/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__nccwpck_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _actions_exec__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(5574);
+/* harmony import */ var _actions_exec__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__nccwpck_require__.n(_actions_exec__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(1017);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__nccwpck_require__.n(path__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(7147);
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__nccwpck_require__.n(fs__WEBPACK_IMPORTED_MODULE_3__);
+const core = __nccwpck_require__(7820);
+const getInput = __nccwpck_require__(7820);
 
 
 
@@ -25,25 +25,25 @@ __nccwpck_require__.r(__webpack_exports__);
 
 try {
   // `who-to-greet` input defined in action metadata file
-  const nameToGreet = _actions_core__WEBPACK_IMPORTED_MODULE_0__.core.getInput('who-to-greet');
+  const nameToGreet = core.getInput('who-to-greet');
   console.log(`Hello ${nameToGreet}!`);
   const time = (new Date()).toTimeString();
-  _actions_core__WEBPACK_IMPORTED_MODULE_0__.core.setOutput("time", time);
+  core.setOutput("time", time);
 
   // Create jest command
   const jestCmd = "npm test sortingSaga -- --ci --json --coverage --testLocationInResults --outputFile=report.json";
   console.log("jestCommand -> ", jestCmd);
 
-  await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_2__.exec)(jestCmd);
+  await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(jestCmd);
   const cwd = process.cwd();
-  const resultFilePath = (0,path__WEBPACK_IMPORTED_MODULE_3__.join)(cwd, "report.json");
+  const resultFilePath = (0,path__WEBPACK_IMPORTED_MODULE_2__.join)(cwd, "report.json");
   console.log("resultFilePath -> ", resultFilePath);
-  const results = JSON.parse((0,fs__WEBPACK_IMPORTED_MODULE_4__.readFileSync)(resultFilePath, "utf-8"))
+  const results = JSON.parse((0,fs__WEBPACK_IMPORTED_MODULE_3__.readFileSync)(resultFilePath, "utf-8"))
   console.debug("Jest results: %j", results)
   const payload = {
-    ..._actions_github__WEBPACK_IMPORTED_MODULE_1__.context.repo,
-    head_sha: _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.payload.pull_request?.head.sha ?? _actions_github__WEBPACK_IMPORTED_MODULE_1__.context.sha,
-    name: _actions_core__WEBPACK_IMPORTED_MODULE_0__.core.getInput("check-name", { required: false }) || ACTION_NAME,
+    ..._actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
+    head_sha: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.head.sha ?? _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.sha,
+    name: core.getInput("check-name", { required: false }) || ACTION_NAME,
     status: "completed",
     conclusion: results.success ? "success" : "failure",
     output: {
@@ -55,15 +55,15 @@ try {
         : `Failed tests: ${results.numFailedTests}/${results.numTotalTests}. Failed suites: ${results.numFailedTests}/${results.numTotalTestSuites}.`,
     }
   }
-  const token = (0,_actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput)('github-token', {
+  const token = getInput('github-token', {
     required: true,
   });
-  const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_1__.getOctokit)(token);
+  const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit)(token);
   await octokit.rest.checks.create(payload)
 
 } catch (error) {
-  _actions_core__WEBPACK_IMPORTED_MODULE_0__.core.setFailed(error.message);
-  _actions_core__WEBPACK_IMPORTED_MODULE_0__.core.setFailed(error.message)
+  core.setFailed(error.message);
+  core.setFailed(error.message)
 }
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } }, 1);

@@ -1,4 +1,6 @@
-import { getInput, core } from '@actions/core';
+const core = require('@actions/core');
+const getInput = require('@actions/core');
+
 import { GitHub, context, getOctokit } from "@actions/github"
 import { exec } from "@actions/exec"
 import { sep, join, resolve } from "path"

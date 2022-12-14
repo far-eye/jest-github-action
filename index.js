@@ -41,7 +41,7 @@ try {
   });
   const octokit = getOctokit(token);
   await octokit.rest.checks.create(payload)
-  await octokit.rest.issues.createComment(payload.summary);
+  await octokit.rest.issues.createComment(payload.output.summary);
 
 } catch (error) {
   core.setFailed(error.message);

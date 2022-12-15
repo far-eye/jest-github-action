@@ -11069,10 +11069,9 @@ async function runAction() {
             }
             await octokit.rest.issues.createComment(commentPayload);
         }
-        
-
     } catch (error) {
-        
+        console.log("error->", error.message);
+        core.setFailed(error.message)
     }
 }
 
@@ -11083,13 +11082,13 @@ async function runJestCmd() {
         const jestCmd = "npm test sortingSaga languageSaga -- --ci --json --coverage --testLocationInResults --outputFile=report.json";
         console.log("jestCommand -> ", jestCmd);
 
-        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(jestCmd, [], { silent: true, cwd: CWD });
+        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(jestCmd, [], { cwd: CWD });
         console.debug("jext command executed");
 
         const resultFilePath = (0,path__WEBPACK_IMPORTED_MODULE_2__.join)(CWD, "report.json");
         console.log("resultFilePath -> ", resultFilePath);
         const results = JSON.parse((0,fs__WEBPACK_IMPORTED_MODULE_3__.readFileSync)(resultFilePath, "utf-8"))
-        console.debug({ results });
+        console.debug({ resultsSuccess: Boolean(results?.success) });
     } catch (error) {
         console.log("error->", error.message);
         core.setFailed(error.message)

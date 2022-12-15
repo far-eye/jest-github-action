@@ -42,10 +42,9 @@ async function runAction() {
             }
             await octokit.rest.issues.createComment(commentPayload);
         }
-        
-
     } catch (error) {
-        
+        console.log("error->", error.message);
+        core.setFailed(error.message)
     }
 }
 
@@ -62,7 +61,7 @@ async function runJestCmd() {
         const resultFilePath = join(CWD, "report.json");
         console.log("resultFilePath -> ", resultFilePath);
         const results = JSON.parse(readFileSync(resultFilePath, "utf-8"))
-        console.debug({ results });
+        console.debug({ resultsSuccess: Boolean(results?.success) });
     } catch (error) {
         console.log("error->", error.message);
         core.setFailed(error.message)

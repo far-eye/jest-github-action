@@ -62,8 +62,6 @@ async function runJestCmd() {
     } catch (error) {
         console.log("error->", error.message);
         core.setFailed(error.message)
-    } finally {
-        return results;
     }
 }
 

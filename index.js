@@ -56,7 +56,7 @@ async function runJestCmd() {
         const jestCmd = "npm test sortingSaga languageSaga -- --ci --json --coverage --testLocationInResults --outputFile=report.json";
         console.log("jestCommand -> ", jestCmd);
 
-        await exec(jestCmd, [], { silent: true, cwd: CWD });
+        await exec(jestCmd, [], { cwd: CWD });
         console.debug("jext command executed");
 
         const resultFilePath = join(CWD, "report.json");

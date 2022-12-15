@@ -11031,6 +11031,7 @@ const core = __nccwpck_require__(7820);
 
 
 
+const TEST_FILE_REPORT = "report.json";
 const cwd = process.cwd();
 const CWD = cwd + path__WEBPACK_IMPORTED_MODULE_2__.sep
 
@@ -11039,9 +11040,10 @@ runAction();
 
 async function runAction() {
     try {
-        const results = await runJestCmd();
-        console.debug('resuls here', {results: results?.success});
-        if(results) {
+        await runJestCmd();
+        const results = await readResult();
+        console.debug('resuls here', { results: results?.success });
+        if (results) {
             const payload = {
                 ..._actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
                 head_sha: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.head.sha ?? _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.sha,
@@ -11077,20 +11079,29 @@ async function runAction() {
 }
 
 async function runJestCmd() {
-    let results = null;
+    
     try {
         // Create jest command
-        const jestCmd = "npm test sortingSaga languageSaga -- --ci --json --coverage --testLocationInResults --outputFile=report.json";
+        const jestCmd = `npm test sortingSaga languageSaga -- --ci --json --coverage --testLocationInResults --outputFile=${TEST_FILE_REPORT}`;
         console.log("jestCommand -> ", jestCmd);
-
         await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(jestCmd, [], { cwd: CWD });
         console.debug("jext command executed");
+    } catch (error) {
+        console.log("error->", error.message);
+        core.setFailed(error.message)
+    } finally {
+        return results;
+    }
+}
 
-        const resultFilePath = (0,path__WEBPACK_IMPORTED_MODULE_2__.join)(CWD, "report.json");
+async function readResult() {
+    let results = null;
+    try {
+        const resultFilePath = (0,path__WEBPACK_IMPORTED_MODULE_2__.join)(CWD, TEST_FILE_REPORT);
         console.log("resultFilePath -> ", resultFilePath);
         results = JSON.parse((0,fs__WEBPACK_IMPORTED_MODULE_3__.readFileSync)(resultFilePath, "utf-8"))
         console.debug({ resultsSuccess: Boolean(results?.success) });
-    } catch (error) {
+    } catch(error) {
         console.log("error->", error.message);
         core.setFailed(error.message)
     } finally {

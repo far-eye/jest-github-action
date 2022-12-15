@@ -4,6 +4,7 @@ import { exec } from "@actions/exec"
 import { sep, join, resolve } from "path"
 import { readFileSync } from "fs"
 
+const TEST_FILE_REPORT = "report.json";
 const cwd = process.cwd();
 const CWD = cwd + sep
 
@@ -12,9 +13,10 @@ runAction();
 
 async function runAction() {
     try {
-        const results = await runJestCmd();
-        console.debug('resuls here', {results: results?.success});
-        if(results) {
+        await runJestCmd();
+        const results = await readResult();
+        console.debug('resuls here', { results: results?.success });
+        if (results) {
             const payload = {
                 ...context.repo,
                 head_sha: context.payload.pull_request?.head.sha ?? context.sha,
@@ -50,20 +52,29 @@ async function runAction() {
 }
 
 async function runJestCmd() {
-    let results = null;
+    
     try {
         // Create jest command
-        const jestCmd = "npm test sortingSaga languageSaga -- --ci --json --coverage --testLocationInResults --outputFile=report.json";
+        const jestCmd = `npm test sortingSaga languageSaga -- --ci --json --coverage --testLocationInResults --outputFile=${TEST_FILE_REPORT}`;
         console.log("jestCommand -> ", jestCmd);
-
         await exec(jestCmd, [], { cwd: CWD });
         console.debug("jext command executed");
+    } catch (error) {
+        console.log("error->", error.message);
+        core.setFailed(error.message)
+    } finally {
+        return results;
+    }
+}
 
-        const resultFilePath = join(CWD, "report.json");
+async function readResult() {
+    let results = null;
+    try {
+        const resultFilePath = join(CWD, TEST_FILE_REPORT);
         console.log("resultFilePath -> ", resultFilePath);
         results = JSON.parse(readFileSync(resultFilePath, "utf-8"))
         console.debug({ resultsSuccess: Boolean(results?.success) });
-    } catch (error) {
+    } catch(error) {
         console.log("error->", error.message);
         core.setFailed(error.message)
     } finally {

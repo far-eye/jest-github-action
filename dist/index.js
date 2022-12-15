@@ -11088,7 +11088,7 @@ async function runJestCmd() {
 
         const resultFilePath = (0,path__WEBPACK_IMPORTED_MODULE_2__.join)(CWD, "report.json");
         console.log("resultFilePath -> ", resultFilePath);
-        const results = JSON.parse((0,fs__WEBPACK_IMPORTED_MODULE_3__.readFileSync)(resultFilePath, "utf-8"))
+        results = JSON.parse((0,fs__WEBPACK_IMPORTED_MODULE_3__.readFileSync)(resultFilePath, "utf-8"))
         console.debug({ resultsSuccess: Boolean(results?.success) });
     } catch (error) {
         console.log("error->", error.message);

@@ -61,7 +61,7 @@ async function runJestCmd() {
 
         const resultFilePath = join(CWD, "report.json");
         console.log("resultFilePath -> ", resultFilePath);
-        const results = JSON.parse(readFileSync(resultFilePath, "utf-8"))
+        results = JSON.parse(readFileSync(resultFilePath, "utf-8"))
         console.debug({ resultsSuccess: Boolean(results?.success) });
     } catch (error) {
         console.log("error->", error.message);

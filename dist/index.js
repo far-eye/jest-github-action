@@ -11054,7 +11054,7 @@ async function runJestCmd() {
 
     try {
         // Create jest command
-        const jestCmd = `npm test sortingSaga languageSaga -- --ci --json --coverage --testLocationInResults --outputFile=${TEST_FILE_REPORT}`;
+        const jestCmd = `npm test -- --ci --json --coverage --testLocationInResults --outputFile=${TEST_FILE_REPORT}`;
         console.log("jestCommand -> ", jestCmd);
         await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(jestCmd, [], { cwd: CWD });
         console.debug("jext command executed");
@@ -11107,7 +11107,7 @@ async function printResult(results) {
             issue_number: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.number ?? 0
         }
         await octokit.rest.issues.createComment(commentPayload);
-        if(!result?.success) {
+        if(!results?.success) {
             // Fail action check if all test cases are not successful
             await core.setFailed("Test cases failing");
         }

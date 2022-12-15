@@ -63,7 +63,7 @@ async function printResult(results) {
             output: {
                 title: results.success ? "Jest tests passed" : "Jest tests failed",
                 text: results.success ? "All " + results.numTotalTests + " test cases passed." : results.numFailedTestSuites + " test cases failed out of " + results.numTotalTests,
-                summary: `Test Suites: ${results.numPassedTestSuites} passed, ${numTotalTestSuites} total` 
+                summary: `Test Suites: ${results.numPassedTestSuites} passed, ${results.numTotalTestSuites} total` 
                     + '\n' 
                     + `Tests:       ${results.numPassedTests} passed, ${results.numTotalTests} total`
             }

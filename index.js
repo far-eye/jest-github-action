@@ -13,6 +13,7 @@ runAction();
 async function runAction() {
     try {
         const results = await runJestCmd();
+        console.debug('resuls here', {results: results?.success});
         if(results) {
             const payload = {
                 ...context.repo,

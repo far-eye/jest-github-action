@@ -11040,6 +11040,7 @@ runAction();
 async function runAction() {
     try {
         const results = await runJestCmd();
+        console.debug('resuls here', {results: results?.success});
         if(results) {
             const payload = {
                 ..._actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,

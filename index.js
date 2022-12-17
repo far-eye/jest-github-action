@@ -27,7 +27,7 @@ async function runJestCmd() {
 
     try {
         // Create jest command
-        const jestCmd = `npm test -- --ci --json --coverage --testLocationInResults --outputFile=${TEST_FILE_REPORT}`;
+        const jestCmd = `npm test DetectRoutingService -- --ci --json --coverage --testLocationInResults --outputFile=${TEST_FILE_REPORT}`;
         console.log("jestCommand -> ", jestCmd);
         await exec(jestCmd, [], { cwd: CWD });
         console.debug("jext command executed");

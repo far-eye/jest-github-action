@@ -13,13 +13,29 @@ runAction();
 
 async function runAction() {
     try {
-        await runJestCmd();
-        const results = await readResult();
-        console.debug('resuls here', { results: results?.success });
-        await printResult(results);
+        let filedList = await findChangesFiledList();
+        console.debug("Ashish -> ", filedList);
+        // await runJestCmd();
+        // const results = await readResult();
+        // console.debug('resuls here', { results: results?.success });
+        // await printResult(results);
     } catch (error) {
         console.log("error->", error.message);
         core.setFailed(error.message)
+    }
+}
+
+async function findChangesFiledList() {
+    try {
+        const { stdout, stderr } = await exec("git diff origin/main --name-only")
+        if (stderr) {
+            throw new Error(stderr)
+
+        }
+        console.log(stdout);
+        return stdout;
+    } catch (error) {
+        console.log(error);
     }
 }
 
@@ -63,8 +79,8 @@ async function printResult(results) {
             output: {
                 title: results.success ? "Jest tests passed" : "Jest tests failed",
                 text: results.success ? "All " + results.numTotalTests + " test cases passed." : results.numFailedTestSuites + " test cases failed out of " + results.numTotalTests,
-                summary: `Test Suites: ${results.numPassedTestSuites} passed, ${results.numTotalTestSuites} total` 
-                    + '\n' 
+                summary: `Test Suites: ${results.numPassedTestSuites} passed, ${results.numTotalTestSuites} total`
+                    + '\n'
                     + `Tests:       ${results.numPassedTests} passed, ${results.numTotalTests} total`
             }
         }
@@ -80,7 +96,7 @@ async function printResult(results) {
             issue_number: context.payload.pull_request?.number ?? 0
         }
         await octokit.rest.issues.createComment(commentPayload);
-        if(!results?.success) {
+        if (!results?.success) {
             // Fail action check if all test cases are not successful
             await core.setFailed("Test cases failing");
         }

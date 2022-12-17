@@ -11054,7 +11054,7 @@ async function runAction() {
 
 async function findChangesFiledList() {
     try {
-        const { stdout, stderr } = await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)("git diff origin/main --name-only")
+        const { stdout, stderr } = await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)("git diff main --name-only")
         if (stderr) {
             throw new Error(stderr)
 

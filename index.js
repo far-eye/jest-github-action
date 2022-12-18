@@ -28,6 +28,18 @@ async function runAction() {
 
 async function findChangesFiledList() {
     try {
+        let myOutput = '';
+        let myError = '';
+
+        const options = {};
+        options.listeners = {
+            stdout: (data) => {
+                myOutput += data.toString();
+            },
+            stderr: (data) => {
+                myError += data.toString();
+            }
+        };
         const githubSha = core.getInput('github-sha', {
             required: true,
         });
@@ -35,8 +47,8 @@ async function findChangesFiledList() {
             required: true
         });
         const cmd = `git diff --name-only --diff-filter=ACMRT ${githubPullSha} ${githubSha}`;
-        const stdout = await exec(cmd)
-        console.debug({stdout});
+        const stdout = await exec(cmd, [], options)
+        console.debug({stdout, myOutput, myError});
         console.log(stdout);
         return stdout;
     } catch (error) {

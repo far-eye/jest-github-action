@@ -11046,8 +11046,9 @@ async function runAction() {
         let fileList = await findChangesFileList();
         // console.debug("Ashish -> ", fileList);
         await runJestCmd(fileList);
-        // const results = await readResult();
+        const results = await readResult();
         // console.debug('resuls here', { results: results?.success });
+        console.debug('resuls here', { results });
         // await printResult(results);
     } catch (error) {
         console.log("error->", error.message);
@@ -11133,9 +11134,9 @@ async function runJestCmd(changedFiles) {
 async function readResult() {
     let results = null;
     try {
-        const resultFilePath = join(CWD, TEST_FILE_REPORT);
+        const resultFilePath = (0,path__WEBPACK_IMPORTED_MODULE_2__.join)(CWD, TEST_FILE_REPORT);
         console.log("resultFilePath -> ", resultFilePath);
-        results = JSON.parse(readFileSync(resultFilePath, "utf-8"))
+        results = JSON.parse((0,fs__WEBPACK_IMPORTED_MODULE_3__.readFileSync)(resultFilePath, "utf-8"))
         console.debug({ resultsSuccess: Boolean(results?.success) });
     } catch (error) {
         console.log("error->", error.message);

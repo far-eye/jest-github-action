@@ -34,7 +34,7 @@ async function findChangesFiledList() {
         const githubPullSha = core.getInput('github-pull-sha', {
             required: true
         });
-        const cmd = `git diff --name-only --diff-filter=ACMRT ${githubPullSha} ${githubSha}`;
+        const cmd = `echo git diff --name-only --diff-filter=ACMRT ${githubPullSha} ${githubSha}`;
         const stdout = await exec(cmd)
         console.log(stdout);
         return stdout;

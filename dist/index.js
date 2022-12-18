@@ -11117,7 +11117,7 @@ async function runJestCmd(changedFiles) {
         };
         
         
-        const jestCmd = `npm test --listTests --findRelatedTests ${changedFiledStr}`;
+        const jestCmd = `npm test --passWithNoTests --listTests --findRelatedTests ${changedFiledStr}`;
         console.log("jestCommand -> ", jestCmd);
         // await exec(jestCmd, [], { cwd: CWD });
         const stdout = await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(jestCmd, [], options);

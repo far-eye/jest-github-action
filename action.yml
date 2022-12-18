@@ -5,6 +5,12 @@ inputs:
     description: 'Who to greet'
     required: true
     default: 'World'
+  github-pull-sha:
+    required: true
+    default: ${{ github.event.pull_request.base.sha }}
+  github-sha:
+    required: true
+    default: ${{ github.sha }}
   github-token:
     required: true
     description: 'A github access token'

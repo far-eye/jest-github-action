@@ -11057,7 +11057,13 @@ async function runAction() {
 
 async function findChangesFiledList() {
     try {
-        const cmd = `git diff --name-only --diff-filter=ACMRT ${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.head.sha}`+ " ${{ github.sha }}"
+        const githubSha = core.getInput('github-sha', {
+            required: true,
+        });
+        const githubPullSha = core.getInput('github-pull-sha', {
+            required: true
+        });
+        const cmd = `git diff --name-only --diff-filter=ACMRT ${githubPullSha} ${githubSha}`;
         const stdout = await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(cmd)
         console.log(stdout);
         return stdout;

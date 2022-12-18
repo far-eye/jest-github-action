@@ -11045,7 +11045,7 @@ async function runAction() {
     try {
         let fileList = await findChangesFileList();
         console.debug("Ashish -> ", fileList);
-        // await runJestCmd();
+        await runJestCmd(fileList);
         // const results = await readResult();
         // console.debug('resuls here', { results: results?.success });
         // await printResult(results);
@@ -11093,13 +11093,14 @@ async function findChangesFileList() {
     }
 }
 
-async function runJestCmd() {
+async function runJestCmd(changedFiles) {
 
     try {
         // Create jest command
-        const jestCmd = `npm test DetectRoutingService -- --ci --json --coverage --testLocationInResults --outputFile=${TEST_FILE_REPORT}`;
+        const changedFiledStr = changedFiles.join(' ');
+        const jestCmd = `npm test ${changedFiledStr} -- --ci --json --coverage --testLocationInResults --outputFile=${TEST_FILE_REPORT}`;
         console.log("jestCommand -> ", jestCmd);
-        await exec(jestCmd, [], { cwd: CWD });
+        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(jestCmd, [], { cwd: CWD });
         console.debug("jext command executed");
     } catch (error) {
         console.log("error->", error.message);

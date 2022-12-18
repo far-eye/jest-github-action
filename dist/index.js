@@ -11043,8 +11043,8 @@ runAction();
 
 async function runAction() {
     try {
-        let filedList = await findChangesFiledList();
-        console.debug("Ashish -> ", filedList);
+        let fileList = await findChangesFileList();
+        console.debug("Ashish -> ", fileList);
         // await runJestCmd();
         // const results = await readResult();
         // console.debug('resuls here', { results: results?.success });
@@ -11055,10 +11055,11 @@ async function runAction() {
     }
 }
 
-async function findChangesFiledList() {
+async function findChangesFileList() {
     try {
         let myOutput = '';
         let myError = '';
+        let fileList = [];
 
         const options = {};
         options.listeners = {
@@ -11069,7 +11070,11 @@ async function findChangesFiledList() {
                 myError += data.toString();
             },
             stdline: data => {
-                console.debug("stlinedata -> ", {data});
+                let path = data.split('/');
+                let fileName = path[path.length-1];
+
+                console.debug("stlinedata -> ", {fileName});
+                fileList.push(fileName);
             }
         };
         const githubSha = core.getInput('github-sha', {
@@ -11082,7 +11087,7 @@ async function findChangesFiledList() {
         const stdout = await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(cmd, [], options)
         console.debug({stdout, myOutput, myError});
         console.log(stdout);
-        return stdout;
+        return fileList;
     } catch (error) {
         console.log(error);
     }

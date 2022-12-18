@@ -11046,9 +11046,9 @@ async function runAction() {
         let fileList = await findChangesFileList();
         console.debug("Ashish -> ", fileList);
         await runJestCmd(fileList);
-        // const results = await readResult();
-        // console.debug('resuls here', { results: results?.success });
-        // await printResult(results);
+        const results = await readResult();
+        console.debug('resuls here', { results: results?.success });
+        await printResult(results);
     } catch (error) {
         console.log("error->", error.message);
         core.setFailed(error.message)
@@ -11104,16 +11104,16 @@ async function runJestCmd(changedFiles) {
         console.debug("jext command executed");
     } catch (error) {
         console.log("error->", error.message);
-        core.setFailed(error.message)
+        // core.setFailed(error.message)
     }
 }
 
 async function readResult() {
     let results = null;
     try {
-        const resultFilePath = join(CWD, TEST_FILE_REPORT);
+        const resultFilePath = (0,path__WEBPACK_IMPORTED_MODULE_2__.join)(CWD, TEST_FILE_REPORT);
         console.log("resultFilePath -> ", resultFilePath);
-        results = JSON.parse(readFileSync(resultFilePath, "utf-8"))
+        results = JSON.parse((0,fs__WEBPACK_IMPORTED_MODULE_3__.readFileSync)(resultFilePath, "utf-8"))
         console.debug({ resultsSuccess: Boolean(results?.success) });
     } catch (error) {
         console.log("error->", error.message);
@@ -11126,8 +11126,8 @@ async function readResult() {
 async function printResult(results) {
     if (results) {
         const payload = {
-            ...context.repo,
-            head_sha: context.payload.pull_request?.head.sha ?? context.sha,
+            ..._actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
+            head_sha: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.head.sha ?? _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.sha,
             name: "jest-github-action-test",
             status: "completed",
             conclusion: results.success ? "success" : "failure",
@@ -11143,12 +11143,12 @@ async function printResult(results) {
         const token = core.getInput('github-token', {
             required: true,
         });
-        const octokit = getOctokit(token);
+        const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit)(token);
         await octokit.rest.checks.create(payload)
         const commentPayload = {
-            ...context.repo,
+            ..._actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
             body: payload.output.summary,
-            issue_number: context.payload.pull_request?.number ?? 0
+            issue_number: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.number ?? 0
         }
         await octokit.rest.issues.createComment(commentPayload);
         if (!results?.success) {

@@ -17,9 +17,9 @@ async function runAction() {
         let fileList = await findChangesFileList();
         console.debug("Ashish -> ", fileList);
         await runJestCmd(fileList);
-        // const results = await readResult();
-        // console.debug('resuls here', { results: results?.success });
-        // await printResult(results);
+        const results = await readResult();
+        console.debug('resuls here', { results: results?.success });
+        await printResult(results);
     } catch (error) {
         console.log("error->", error.message);
         core.setFailed(error.message)
@@ -75,7 +75,7 @@ async function runJestCmd(changedFiles) {
         console.debug("jext command executed");
     } catch (error) {
         console.log("error->", error.message);
-        core.setFailed(error.message)
+        // core.setFailed(error.message)
     }
 }
 

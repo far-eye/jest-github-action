@@ -11112,7 +11112,7 @@ async function runJestCmd(changedFiles) {
                 myError += data.toString();
             },
             stdline: data => {
-                console.log({stdline});
+                // console.log({stdline});
             }
         };
         options.cwd = CWD;
@@ -11122,7 +11122,7 @@ async function runJestCmd(changedFiles) {
         console.log("jestCommand -> ", jestCmd);
         // await exec(jestCmd, [], { cwd: CWD });
         const stdout = await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(jestCmd, [], options);
-        console.debug({ myOutput, myError});
+        // console.debug({ myOutput, myError});
         console.debug("jext command executed");
     } catch (error) {
         console.log("error->", error.message);

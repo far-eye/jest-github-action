@@ -11098,7 +11098,7 @@ async function runJestCmd(changedFiles) {
     try {
         // Create jest command
         const changedFiledStr = changedFiles.join(' ');
-        const jestCmd = `npm test ${changedFiledStr} -- --ci --json --coverage --testLocationInResults --outputFile=${TEST_FILE_REPORT}`;
+        const jestCmd = `npm test ${changedFiledStr} -- --ci --json --coverage --testLocationInResults --passWithNoTests --outputFile=${TEST_FILE_REPORT}`;
         
         let myOutput = '';
         let myError = '';

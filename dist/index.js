@@ -11076,7 +11076,7 @@ async function findChangesFiledList() {
             required: true
         });
         const cmd = `git diff --name-only --diff-filter=ACMRT ${githubPullSha} ${githubSha}`;
-        const stdout = await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(cmd, [], options)
+        const stdout = await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(cmd, ['xargs'], options)
         console.debug({stdout, myOutput, myError});
         console.log(stdout);
         return stdout;

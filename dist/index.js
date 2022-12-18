@@ -11054,7 +11054,8 @@ async function runAction() {
 
 async function findChangesFiledList() {
     try {
-        const { stdout, stderr } = await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)("git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | xargs")
+        const cmd = `git diff --name-only --diff-filter=ACMRT ${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.head.sha} ${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.sha} | xargs`
+        const { stdout, stderr } = await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(cmd)
         if (stderr) {
             throw new Error(stderr)
 

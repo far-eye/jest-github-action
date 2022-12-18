@@ -27,7 +27,8 @@ async function runAction() {
 
 async function findChangesFiledList() {
     try {
-        const { stdout, stderr } = await exec("git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | xargs")
+        const cmd = `git diff --name-only --diff-filter=ACMRT ${context.payload.pull_request?.head.sha} ${context.sha} | xargs`
+        const { stdout, stderr } = await exec(cmd)
         if (stderr) {
             throw new Error(stderr)
 

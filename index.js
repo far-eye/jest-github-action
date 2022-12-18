@@ -17,9 +17,9 @@ async function runAction() {
         let fileList = await findChangesFileList();
         console.debug("Ashish -> ", fileList);
         await runJestCmd(fileList);
-        const results = await readResult();
-        console.debug('resuls here', { results: results?.success });
-        await printResult(results);
+        // const results = await readResult();
+        // console.debug('resuls here', { results: results?.success });
+        // await printResult(results);
     } catch (error) {
         console.log("error->", error.message);
         core.setFailed(error.message)
@@ -88,7 +88,7 @@ async function runJestCmd(changedFiles) {
         };
         
         
-        const jestCmd = `jest --listTests --findRelatedTests ${changedFiledStr}`;
+        const jestCmd = `npm test --listTests --findRelatedTests ${changedFiledStr}`;
         console.log("jestCommand -> ", jestCmd);
         // await exec(jestCmd, [], { cwd: CWD });
         const stdout = await exec(jestCmd, [], options);

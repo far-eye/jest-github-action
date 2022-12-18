@@ -38,6 +38,9 @@ async function findChangesFiledList() {
             },
             stderr: (data) => {
                 myError += data.toString();
+            },
+            stdline: data => {
+                console.debug("stlinedata -> ", {data});
             }
         };
         const githubSha = core.getInput('github-sha', {

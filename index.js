@@ -34,7 +34,7 @@ async function findChangesFiledList() {
         const options = {};
         options.listeners = {
             stdout: (data) => {
-                myOutput += data.toString();
+                myOutput += data;
             },
             stderr: (data) => {
                 myError += data.toString();

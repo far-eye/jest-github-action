@@ -11098,9 +11098,30 @@ async function runJestCmd(changedFiles) {
     try {
         // Create jest command
         const changedFiledStr = changedFiles.join(' ');
-        const jestCmd = `npm test ${changedFiledStr} -- --ci --json --coverage --testLocationInResults --outputFile=${TEST_FILE_REPORT}`;
+        // const jestCmd = `npm test ${changedFiledStr} -- --ci --json --coverage --testLocationInResults --outputFile=${TEST_FILE_REPORT}`;
+        
+        let myOutput = '';
+        let myError = '';
+
+        const options = {};
+        options.listeners = {
+            stdout: (data) => {
+                myOutput += data;
+            },
+            stderr: (data) => {
+                myError += data.toString();
+            },
+            stdline: data => {
+                console.log({stdline});
+            }
+        };
+        
+        
+        const jestCmd = `jest --listTests --findRelatedTests ${changedFiledStr}`;
         console.log("jestCommand -> ", jestCmd);
-        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(jestCmd, [], { cwd: CWD });
+        // await exec(jestCmd, [], { cwd: CWD });
+        const stdout = await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(jestCmd, [], options);
+        console.debug({ myOutput, myError});
         console.debug("jext command executed");
     } catch (error) {
         console.log("error->", error.message);

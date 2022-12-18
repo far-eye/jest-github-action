@@ -11047,9 +11047,9 @@ async function runAction() {
         // console.debug("Ashish -> ", fileList);
         await runJestCmd(fileList);
         const results = await readResult();
-        // console.debug('resuls here', { results: results?.success });
-        console.debug('resuls here', { results });
-        // await printResult(results);
+        console.debug('resuls here', { results: results?.success });
+        // console.debug('resuls here', { results });
+        await printResult(results);
     } catch (error) {
         console.log("error->", error.message);
         core.setFailed(error.message)
@@ -11149,8 +11149,8 @@ async function readResult() {
 async function printResult(results) {
     if (results) {
         const payload = {
-            ...context.repo,
-            head_sha: context.payload.pull_request?.head.sha ?? context.sha,
+            ..._actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
+            head_sha: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.head.sha ?? _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.sha,
             name: "jest-github-action-test",
             status: "completed",
             conclusion: results.success ? "success" : "failure",
@@ -11166,12 +11166,12 @@ async function printResult(results) {
         const token = core.getInput('github-token', {
             required: true,
         });
-        const octokit = getOctokit(token);
+        const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit)(token);
         await octokit.rest.checks.create(payload)
         const commentPayload = {
-            ...context.repo,
+            ..._actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
             body: payload.output.summary,
-            issue_number: context.payload.pull_request?.number ?? 0
+            issue_number: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.number ?? 0
         }
         await octokit.rest.issues.createComment(commentPayload);
         if (!results?.success) {

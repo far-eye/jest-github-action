@@ -18,9 +18,9 @@ async function runAction() {
         // console.debug("Ashish -> ", fileList);
         await runJestCmd(fileList);
         const results = await readResult();
-        // console.debug('resuls here', { results: results?.success });
-        console.debug('resuls here', { results });
-        // await printResult(results);
+        console.debug('resuls here', { results: results?.success });
+        // console.debug('resuls here', { results });
+        await printResult(results);
     } catch (error) {
         console.log("error->", error.message);
         core.setFailed(error.message)

@@ -11025,7 +11025,10 @@ __nccwpck_require__.r(__webpack_exports__);
 /* harmony import */ var path__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__nccwpck_require__.n(path__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_3__ = __nccwpck_require__(7147);
 /* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__nccwpck_require__.n(fs__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _actions_github_lib_utils__WEBPACK_IMPORTED_MODULE_4__ = __nccwpck_require__(4427);
+/* harmony import */ var _actions_github_lib_utils__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__nccwpck_require__.n(_actions_github_lib_utils__WEBPACK_IMPORTED_MODULE_4__);
 const core = __nccwpck_require__(7820);
+
 
 
 
@@ -11054,7 +11057,7 @@ async function runAction() {
 
 async function findChangesFiledList() {
     try {
-        const cmd = `git diff --name-only --diff-filter=ACMRT ${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.head.sha} ${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.sha}`
+        const cmd = `git diff --name-only --diff-filter=ACMRT ${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.head.sha}`+ " ${{ github.sha }}"
         const stdout = await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(cmd)
         console.log(stdout);
         return stdout;

@@ -3,6 +3,7 @@ import { context, getOctokit } from "@actions/github"
 import { exec } from "@actions/exec"
 import { sep, join, resolve } from "path"
 import { readFileSync } from "fs"
+import { GitHub } from "@actions/github/lib/utils";
 
 const TEST_FILE_REPORT = "report.json";
 const cwd = process.cwd();
@@ -27,7 +28,7 @@ async function runAction() {
 
 async function findChangesFiledList() {
     try {
-        const cmd = `git diff --name-only --diff-filter=ACMRT ${context.payload.pull_request?.head.sha} ${context.sha}`
+        const cmd = `git diff --name-only --diff-filter=ACMRT ${context.payload.pull_request?.head.sha}`+ " ${{ github.sha }}"
         const stdout = await exec(cmd)
         console.log(stdout);
         return stdout;

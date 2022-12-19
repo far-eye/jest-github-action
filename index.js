@@ -69,7 +69,7 @@ async function findChangesFileList() {
         const token = core.getInput('github-token', {
             required: true,
         });
-        const client = new GitHub(token)
+        // const client = new GitHub(token)
         const base = context.payload.pull_request?.base?.sha;
         const head = context.payload.pull_request?.head?.sha;
 

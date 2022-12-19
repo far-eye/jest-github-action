@@ -1,5 +1,5 @@
 const core = require('@actions/core');
-import { context, getOctokit, GitHub } from "@actions/github"
+import { context, getOctokit } from "@actions/github"
 import { exec } from "@actions/exec"
 import { sep, join, resolve } from "path"
 import { readFileSync } from "fs"

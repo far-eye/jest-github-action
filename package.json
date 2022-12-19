@@ -1,6 +1,6 @@
 {
   "name": "hello-world-javascript-action",
-  "version": "1.99.911",
+  "version": "1.99.912",
   "main": "index.js",
   "scripts": {},
   "repository": {
@@ -18,6 +18,6 @@
   "dependencies": {
     "@actions/core": "^1.10.0",
     "@actions/exec": "^1.1.1",
-    "@actions/github": "^2.1.0"
+    "@actions/github": "^5.1.1"
   }
 }

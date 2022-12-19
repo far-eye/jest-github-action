@@ -11111,7 +11111,9 @@ async function runJestCmd(changedFiles) {
         // Create jest command
         const changedFiledStr = changedFiles.join(' ');
         const jestCmd = `npm test ${changedFiledStr} -- --ci --json --coverage --testLocationInResults --passWithNoTests --outputFile=${TEST_FILE_REPORT}`;
-        options.cwd = CWD;
+        const options = {
+            cwd: CWD
+        }
         console.log("jest command -> ", jestCmd);
         const stdout = await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(jestCmd, [], options);
         console.log("Jest command executed");

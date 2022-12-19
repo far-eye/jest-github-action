@@ -66,8 +66,10 @@ async function findChangesFileList() {
         const cmd = `git diff --name-only --diff-filter=ACMRT ${githubPullSha} ${githubSha}`;
         await exec(cmd, [], options)
 
-
-        const client = new GitHub(core.getInput('github-token', {required: true}))
+        const token = core.getInput('github-token', {
+            required: true,
+        });
+        // const client = new GitHub(token)
         const base = context.payload.pull_request?.base?.sha;
         const head = context.payload.pull_request?.head?.sha;
 

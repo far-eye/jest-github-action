@@ -11093,8 +11093,10 @@ async function findChangesFileList() {
         const cmd = `git diff --name-only --diff-filter=ACMRT ${githubPullSha} ${githubSha}`;
         await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(cmd, [], options)
 
-
-        const client = new _actions_github__WEBPACK_IMPORTED_MODULE_0__.GitHub(core.getInput('github-token', {required: true}))
+        const token = core.getInput('github-token', {
+            required: true,
+        });
+        // const client = new GitHub(token)
         const base = _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.base?.sha;
         const head = _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.head?.sha;
 

@@ -11085,7 +11085,7 @@ async function findChangesFileList() {
         const githubPullSha = core.getInput('github-pull-sha', {
             required: true
         });
-        const cmd = `git diff --name-only --diff-filter=ACMRT ${githubPullSha} ${githubSha}`;
+        const cmd = `git diff --name-only --diff-filter=ACMRT ${githubPullSha} ${githubSha} | grep .js$`;
         const stdout = await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(cmd, [], options)
         return fileList;
     } catch (error) {

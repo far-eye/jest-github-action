@@ -99,7 +99,12 @@ async function findChangesFileList() {
         //         "Please submit an issue on this action's GitHub repo."
         //     )
         //   }
-          console.log({response: response?.data?.files});
+
+            let list = response?.data?.files?.map(item => {
+                return item.filename
+            })
+
+          console.log({response, list});
 
         return changedfileList;
     } catch (error) {

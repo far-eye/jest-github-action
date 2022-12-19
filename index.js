@@ -57,17 +57,17 @@ async function findChangesFileList() {
             )
           }
         const changedFileList = response?.data?.files?.map(file => {
-            console.log({file});
+            let filePath = file.filename;
             // For now below code will be executed for all file type
-                // ToDo: Run below code only for JS files by adding grep option in exec command
+            // ToDo: Run below code only for JS files by adding grep option in exec command
 
-                // Split path (For eg src/services/myservice.js will split into ['src', 'services', 'myservice.js']);
-                // let path = file.split(sep);
-                // // Extract fileName from last entry of path array
-                // let fileNameWithExt = path[path.length-1];
-                // // Remove extension from JS files
-                // let fileName = fileNameWithExt.split('.js')?.[0];
-                return file.fileName
+            // Split path (For eg src/services/myservice.js will split into ['src', 'services', 'myservice.js']);
+            let pathList = filePath.split(sep);
+            // Extract fileName from last entry of path array
+            let fileNameWithExt = pathList[pathList.length - 1];
+            // Remove extension from JS files
+            let fileName = fileNameWithExt.split('.js')?.[0];
+            return fileName
         })
 
         console.log({ response, changedFileList });

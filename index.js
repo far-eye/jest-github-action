@@ -75,12 +75,12 @@ async function findChangesFileList() {
 
         core.info(`Base commit: ${base}`)
         core.info(`Head commit: ${head}`)
-        // const response = await client.request.compareCommits({
-        //     base,
-        //     head,
-        //     owner: context.repo.owner,
-        //     repo: context.repo.repo
-        //   })
+        const response = await client.request.compareCommits({
+            base,
+            head,
+            owner: context.repo.owner,
+            repo: context.repo.repo
+          })
 
         //   if (response.status !== 200) {
         //     core.setFailed(

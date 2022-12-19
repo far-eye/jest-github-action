@@ -3,9 +3,11 @@
 This action run jest unit test and generate a report and fail PR if any test cases are failing
 
 This action will run unit test only for files changed in current PR. 
+If all test cases are passing, it will mark PR as success. If any test cases are failing, 
+then it will mark PR as failed 
 
-If no test cases are pesent for any file, then it will mark PR as success. 
-If any test cases are failing, then it will mark PR as failed 
+
+If no test cases are pesent for any changed file, then it will mark PR as success. 
 
 ## Example usage
 

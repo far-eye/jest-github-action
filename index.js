@@ -15,11 +15,11 @@ async function runAction() {
     try {
         let changedFileList = await findChangesFileList();
         console.log("Changed File List -> ", changedFileList);
-        await runJestCmd(changedFileList);
-        const results = await readResult();
-        if(results) {
-            await printResult(results);
-        }
+        // await runJestCmd(changedFileList);
+        // const results = await readResult();
+        // if(results) {
+        //     await printResult(results);
+        // }
     } catch (error) {
         console.log("error->", error.message);
         core.setFailed(error.message)
@@ -70,20 +70,23 @@ async function findChangesFileList() {
         const client = new GitHub(core.getInput('github-token', {required: true}))
         const base = context.payload.pull_request?.base?.sha;
         const head = context.payload.pull_request?.head?.sha;
-        const response = await client.request.compareCommits({
-            base,
-            head,
-            owner: context.repo.owner,
-            repo: context.repo.repo
-          })
 
-          if (response.status !== 200) {
-            core.setFailed(
-              `The GitHub API for comparing the base and head commits for this ${context.eventName} event returned ${response.status}, expected 200. ` +
-                "Please submit an issue on this action's GitHub repo."
-            )
-          }
-          console.log({files: response?.data?.files});
+        core.info(`Base commit: ${base}`)
+        core.info(`Head commit: ${head}`)
+        // const response = await client.request.compareCommits({
+        //     base,
+        //     head,
+        //     owner: context.repo.owner,
+        //     repo: context.repo.repo
+        //   })
+
+        //   if (response.status !== 200) {
+        //     core.setFailed(
+        //       `The GitHub API for comparing the base and head commits for this ${context.eventName} event returned ${response.status}, expected 200. ` +
+        //         "Please submit an issue on this action's GitHub repo."
+        //     )
+        //   }
+        //   console.log({files: response?.data?.files});
 
         return changedfileList;
     } catch (error) {

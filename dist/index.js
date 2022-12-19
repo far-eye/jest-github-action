@@ -11042,11 +11042,11 @@ async function runAction() {
     try {
         let changedFileList = await findChangesFileList();
         console.log("Changed File List -> ", changedFileList);
-        await runJestCmd(changedFileList);
-        const results = await readResult();
-        if(results) {
-            await printResult(results);
-        }
+        // await runJestCmd(changedFileList);
+        // const results = await readResult();
+        // if(results) {
+        //     await printResult(results);
+        // }
     } catch (error) {
         console.log("error->", error.message);
         core.setFailed(error.message)
@@ -11097,20 +11097,23 @@ async function findChangesFileList() {
         const client = new _actions_github__WEBPACK_IMPORTED_MODULE_0__.GitHub(core.getInput('github-token', {required: true}))
         const base = _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.base?.sha;
         const head = _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.head?.sha;
-        const response = await client.request.compareCommits({
-            base,
-            head,
-            owner: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo.owner,
-            repo: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo.repo
-          })
 
-          if (response.status !== 200) {
-            core.setFailed(
-              `The GitHub API for comparing the base and head commits for this ${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.eventName} event returned ${response.status}, expected 200. ` +
-                "Please submit an issue on this action's GitHub repo."
-            )
-          }
-          console.log({files: response?.data?.files});
+        core.info(`Base commit: ${base}`)
+        core.info(`Head commit: ${head}`)
+        // const response = await client.request.compareCommits({
+        //     base,
+        //     head,
+        //     owner: context.repo.owner,
+        //     repo: context.repo.repo
+        //   })
+
+        //   if (response.status !== 200) {
+        //     core.setFailed(
+        //       `The GitHub API for comparing the base and head commits for this ${context.eventName} event returned ${response.status}, expected 200. ` +
+        //         "Please submit an issue on this action's GitHub repo."
+        //     )
+        //   }
+        //   console.log({files: response?.data?.files});
 
         return changedfileList;
     } catch (error) {
@@ -11131,7 +11134,7 @@ async function runJestCmd(changedFiles) {
             cwd: CWD
         }
         console.log("jest command -> ", jestCmd);
-        const stdout = await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(jestCmd, [], options);
+        const stdout = await exec(jestCmd, [], options);
         console.log("Jest command executed");
     } catch (error) {
         console.log("error->", error.message);
@@ -11144,9 +11147,9 @@ async function runJestCmd(changedFiles) {
 async function readResult() {
     let results = null;
     try {
-        const resultFilePath = (0,path__WEBPACK_IMPORTED_MODULE_2__.join)(CWD, TEST_FILE_REPORT);
+        const resultFilePath = join(CWD, TEST_FILE_REPORT);
         console.log("Result file path -> ", resultFilePath);
-        results = JSON.parse((0,fs__WEBPACK_IMPORTED_MODULE_3__.readFileSync)(resultFilePath, "utf-8"))
+        results = JSON.parse(readFileSync(resultFilePath, "utf-8"))
         console.log({ resultsSuccess: Boolean(results?.success) });
     } catch (error) {
         console.log("error->", error.message);
@@ -11159,8 +11162,8 @@ async function readResult() {
 async function printResult(results) {
     if (results) {
         const payload = {
-            ..._actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
-            head_sha: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.head.sha ?? _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.sha,
+            ...context.repo,
+            head_sha: context.payload.pull_request?.head.sha ?? context.sha,
             name: "jest-github-action",
             status: "completed",
             conclusion: results.success ? "success" : "failure",
@@ -11176,12 +11179,12 @@ async function printResult(results) {
         const token = core.getInput('github-token', {
             required: true,
         });
-        const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit)(token);
+        const octokit = getOctokit(token);
         await octokit.rest.checks.create(payload)
         const commentPayload = {
-            ..._actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
+            ...context.repo,
             body: payload.output.summary,
-            issue_number: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.number ?? 0
+            issue_number: context.payload.pull_request?.number ?? 0
         }
         await octokit.rest.issues.createComment(commentPayload);
         if (!results?.success) {

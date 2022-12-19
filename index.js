@@ -80,9 +80,13 @@ async function runJestCmd(changedFiles) {
 
     try {
         // Create jest command
+        const githubPullSha = core.getInput('github-pull-sha', {
+            required: true
+        });
+
         const changedFiledStr = changedFiles.join(' ');
         // const jestCmd = `npm test ${changedFiledStr} -- --ci --json --coverage --testLocationInResults --passWithNoTests --outputFile=${TEST_FILE_REPORT}`;
-        const jestCmd = `npm test -- --ci --json --coverage --changedSince=${context.payload.pull_request?.base.ref} --testLocationInResults --passWithNoTests --outputFile=${TEST_FILE_REPORT}`;
+        const jestCmd = `npm test -- --ci --json --coverage --changedSince=${githubPullSha} --testLocationInResults --passWithNoTests --outputFile=${TEST_FILE_REPORT}`;
         const options = {
             cwd: CWD
         }

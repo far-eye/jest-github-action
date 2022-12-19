@@ -1,9 +1,8 @@
 {
   "name": "hello-world-javascript-action",
-  "version": "1.36.0",
+  "version": "1.36.1",
   "main": "index.js",
-  "scripts": {
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sarinashish/hello-world-javascript-action.git"

@@ -11043,13 +11043,13 @@ runAction();
 
 async function runAction() {
     try {
-        let fileList = await findChangesFileList();
-        console.debug("Ashish -> ", fileList);
-        await runJestCmd(fileList);
+        let changedFileList = await findChangesFileList();
+        console.log("Changed File List -> ", changedFileList);
+        await runJestCmd(changedFileList);
         const results = await readResult();
-        console.debug('resuls here', { results: results?.success });
-        console.debug('resuls here', { results });
-        await printResult(results);
+        if(results) {
+            await printResult(results);
+        }
     } catch (error) {
         console.log("error->", error.message);
         core.setFailed(error.message)
@@ -11058,85 +11058,78 @@ async function runAction() {
 
 async function findChangesFileList() {
     try {
-        let myOutput = '';
-        let myError = '';
-        let fileList = [];
+        let exeOutput = '';
+        let exeError = '';
+        let changedfileList = [];
 
         const options = {};
         options.listeners = {
             stdout: (data) => {
-                myOutput += data;
+                exeOutput += data;
             },
             stderr: (data) => {
-                myError += data.toString();
+                exeError += data.toString();
             },
             stdline: data => {
-                console.log({data});
-                let path = data.split('/');
+                // For now below code will be executed for all file type
+                // ToDo: Run below code only for JS files by adding grep option in exec command
+
+                // Split path (For eg src/services/myservice.js will split into ['src', 'services', 'myservice.js']);
+                let path = data.split(path__WEBPACK_IMPORTED_MODULE_2__.sep);
+                // Extract fileName from last entry of path array
                 let fileNameWithExt = path[path.length-1];
+                // Remove extension from JS files
                 const fileName = fileNameWithExt.split('.js')?.[0];
-                console.debug("stlinedata -> ", {fileName: fileName});
-                fileList.push(fileName);
+                changedfileList.push(fileName);
             }
         };
+        // get current branch SHA
         const githubSha = core.getInput('github-sha', {
             required: true,
         });
+
+        // get base branch SHA
         const githubPullSha = core.getInput('github-pull-sha', {
             required: true
         });
+
         const cmd = `git diff --name-only --diff-filter=ACMRT ${githubPullSha} ${githubSha}`;
-        const stdout = await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(cmd, [], options)
-        return fileList;
+        await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(cmd, [], options)
+
+        return changedfileList;
     } catch (error) {
-        console.log(error);
+        core.setFailed(error.message);
     }
 }
 
+
+// This method will run unit test only on chnaged files in current PR 
+// and it will write its result in report.json file
 async function runJestCmd(changedFiles) {
 
     try {
         // Create jest command
         const changedFiledStr = changedFiles.join(' ');
         const jestCmd = `npm test ${changedFiledStr} -- --ci --json --coverage --testLocationInResults --passWithNoTests --outputFile=${TEST_FILE_REPORT}`;
-        
-        let myOutput = '';
-        let myError = '';
-
-        const options = {};
-        options.listeners = {
-            stdout: (data) => {
-                myOutput += data;
-            },
-            stderr: (data) => {
-                myError += data.toString();
-            },
-            stdline: data => {
-                // console.log({stdline});
-            }
-        };
         options.cwd = CWD;
-        
-        
-        // const jestCmd = `npm test --listTests --findRelatedTests ${changedFiledStr}`;
-        console.log("jestCommand -> ", jestCmd);
-        // await exec(jestCmd, [], { cwd: CWD });
+        console.log("jest command -> ", jestCmd);
         const stdout = await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(jestCmd, [], options);
-        // console.debug({ myOutput, myError});
-        console.debug("jext command executed");
+        console.log("Jest command executed");
     } catch (error) {
         console.log("error->", error.message);
-        // core.setFailed(error.message)
     }
 }
 
+
+
+// This methid will read results written in report.json
 async function readResult() {
     let results = null;
     try {
         const resultFilePath = (0,path__WEBPACK_IMPORTED_MODULE_2__.join)(CWD, TEST_FILE_REPORT);
-        console.log("resultFilePath -> ", resultFilePath);
+        console.log("Result file path -> ", resultFilePath);
         results = JSON.parse((0,fs__WEBPACK_IMPORTED_MODULE_3__.readFileSync)(resultFilePath, "utf-8"))
-        console.debug({ resultsSuccess: Boolean(results?.success) });
+        console.log({ resultsSuccess: Boolean(results?.success) });
     } catch (error) {
         console.log("error->", error.message);
         core.setFailed(error.message)
@@ -11175,7 +11168,7 @@ async function printResult(results) {
         await octokit.rest.issues.createComment(commentPayload);
         if (!results?.success) {
             // Fail action check if all test cases are not successful
-            await core.setFailed("Test cases failing");
+            await core.setFailed("Test cases failing.");
         }
     }
 }

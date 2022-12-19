@@ -2,6 +2,10 @@
 
 This action run jest unit test and generate a report and fail PR if any test cases are failing
 
+This action will run unit test only for files changed in current PR
+If no test cases are pesent for any file, then it will mark PR as success
+If any test caes are failing, then it will mark PR as failed 
+
 ## Example usage
 
 ```yaml

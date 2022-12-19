@@ -15,12 +15,12 @@ runAction();
 async function runAction() {
     try {
         let fileList = await findChangesFileList();
-        // console.debug("Ashish -> ", fileList);
-        await runJestCmd(fileList);
-        const results = await readResult();
-        console.debug('resuls here', { results: results?.success });
-        // console.debug('resuls here', { results });
-        await printResult(results);
+        console.debug("Ashish -> ", fileList);
+        // await runJestCmd(fileList);
+        // const results = await readResult();
+        // console.debug('resuls here', { results: results?.success });
+        // // console.debug('resuls here', { results });
+        // await printResult(results);
     } catch (error) {
         console.log("error->", error.message);
         core.setFailed(error.message)
@@ -45,7 +45,7 @@ async function findChangesFileList() {
                 let path = data.split('/');
                 let fileName = path[path.length-1];
 
-                // console.debug("stlinedata -> ", {fileName});
+                console.debug("stlinedata -> ", {fileName});
                 fileList.push(fileName);
             }
         };
@@ -57,8 +57,6 @@ async function findChangesFileList() {
         });
         const cmd = `git diff --name-only --diff-filter=ACMRT ${githubPullSha} ${githubSha}`;
         const stdout = await exec(cmd, [], options)
-        // console.debug({stdout, myOutput, myError});
-        // console.log(stdout);
         return fileList;
     } catch (error) {
         console.log(error);

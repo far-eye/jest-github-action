@@ -11126,7 +11126,7 @@ async function findChangesFileList() {
         //         "Please submit an issue on this action's GitHub repo."
         //     )
         //   }
-          console.log({response});
+          console.log({response: response?.data?.files});
 
         return changedfileList;
     } catch (error) {

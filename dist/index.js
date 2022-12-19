@@ -31227,13 +31227,24 @@ async function findChangesFileList() {
 
         core.info(`Base commit: ${base}`)
         core.info(`Head commit: ${head}`)
-        const response = await client.request.compareCommits({
-            base,
-            head,
-            owner: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo.owner,
-            repo: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo.repo
-          })
+        const owner = _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo.owner;
+        const repo = _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo.repo;
+        // const response = await client.request.compareCommits({
+        //     base,
+        //     head,
+        //     owner: context.repo.owner,
+        //     repo: context.repo.repo
+        //   })
 
+        // Octokit.js
+        // https://github.com/octokit/core.js#readme
+        const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit)(token);
+
+        const response = await octokit.request('GET /repos/{owner}/{repo}/compare/{basehead}', {
+            owner,
+            repo,
+            basehead: `${base}...${head}`
+        })  
         //   if (response.status !== 200) {
         //     core.setFailed(
         //       `The GitHub API for comparing the base and head commits for this ${context.eventName} event returned ${response.status}, expected 200. ` +

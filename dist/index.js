@@ -11071,6 +11071,7 @@ async function findChangesFileList() {
                 myError += data.toString();
             },
             stdline: data => {
+                console.log({data});
                 let path = data.split('/');
                 let fileName = path[path.length-1];
 

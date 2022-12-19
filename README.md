@@ -12,5 +12,5 @@ steps:
   - name: Installing dependencies
     run: npm install --legacy-peer-deps 
   - name: Jest Action
-    uses: sarinashish/hello-world-javascript-action@v2.0.0
+    uses: far-eye/jest-github-action@v2.0.0
 ```

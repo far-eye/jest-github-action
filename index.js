@@ -15,11 +15,11 @@ async function runAction() {
     try {
         let changedFileList = await findChangesFileList();
         console.log("Changed File List -> ", changedFileList);
-        // await runJestCmd(changedFileList);
-        // const results = await readResult();
-        // if(results) {
-        //     await printResult(results);
-        // }
+        await runJestCmd(changedFileList);
+        const results = await readResult();
+        if(results) {
+            await printResult(results);
+        }
     } catch (error) {
         console.log("error->", error.message);
         core.setFailed(error.message)
@@ -28,48 +28,11 @@ async function runAction() {
 
 async function findChangesFileList() {
     try {
-        let exeOutput = '';
-        let exeError = '';
-        let changedfileList = [];
 
-        const options = {};
-        options.listeners = {
-            stdout: (data) => {
-                exeOutput += data;
-            },
-            stderr: (data) => {
-                exeError += data.toString();
-            },
-            stdline: data => {
-                // For now below code will be executed for all file type
-                // ToDo: Run below code only for JS files by adding grep option in exec command
-
-                // Split path (For eg src/services/myservice.js will split into ['src', 'services', 'myservice.js']);
-                let path = data.split(sep);
-                // Extract fileName from last entry of path array
-                let fileNameWithExt = path[path.length-1];
-                // Remove extension from JS files
-                const fileName = fileNameWithExt.split('.js')?.[0];
-                changedfileList.push(fileName);
-            }
-        };
-        // get current branch SHA
-        const githubSha = core.getInput('github-sha', {
-            required: true,
-        });
-
-        // get base branch SHA
-        const githubPullSha = core.getInput('github-pull-sha', {
-            required: true
-        });
-
-        const cmd = `git diff --name-only --diff-filter=ACMRT ${githubPullSha} ${githubSha}`;
-        await exec(cmd, [], options)
-
+        // Get access token from input
         const token = core.getInput('github-token', {
             required: true,
         });
-        // const client = new GitHub(token)
         const base = context.payload.pull_request?.base?.sha;
         const head = context.payload.pull_request?.head?.sha;
 
@@ -77,36 +40,38 @@ async function findChangesFileList() {
         core.info(`Head commit: ${head}`)
         const owner = context.repo.owner;
         const repo = context.repo.repo;
-        // const response = await client.request.compareCommits({
-        //     base,
-        //     head,
-        //     owner: context.repo.owner,
-        //     repo: context.repo.repo
-        //   })
-
         // Octokit.js
         // https://github.com/octokit/core.js#readme
         const octokit = getOctokit(token);
 
+        // Compare base PR base branch commit and feature branch head commit
         const response = await octokit.request('GET /repos/{owner}/{repo}/compare/{basehead}', {
             owner,
             repo,
             basehead: `${base}...${head}`
         })  
-        //   if (response.status !== 200) {
-        //     core.setFailed(
-        //       `The GitHub API for comparing the base and head commits for this ${context.eventName} event returned ${response.status}, expected 200. ` +
-        //         "Please submit an issue on this action's GitHub repo."
-        //     )
-        //   }
+          if (response.status !== 200) {
+            core.setFailed(
+              `The GitHub API for comparing the base and head commits for this ${context.eventName} event returned ${response.status}, expected 200. ` +
+                "Please submit an issue on this action's GitHub repo."
+            )
+          }
+        const changedFileList = response?.data?.files?.map(file => {
+            // For now below code will be executed for all file type
+                // ToDo: Run below code only for JS files by adding grep option in exec command
 
-            let list = response?.data?.files?.map(item => {
-                return item.filename
-            })
+                // Split path (For eg src/services/myservice.js will split into ['src', 'services', 'myservice.js']);
+                let path = file.split(sep);
+                // Extract fileName from last entry of path array
+                let fileNameWithExt = path[path.length-1];
+                // Remove extension from JS files
+                let fileName = fileNameWithExt.split('.js')?.[0];
+                return filename
+        })
 
-          console.log({response, list});
+        console.log({ response, changedFileList });
 
-        return changedfileList;
+        return changedFileList || [];
     } catch (error) {
         core.setFailed(error.message);
     }

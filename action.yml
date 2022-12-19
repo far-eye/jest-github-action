@@ -1,12 +1,6 @@
 name: 'Run Jest'
 description: 'Run jest unit test and generate report'
 inputs:
-  github-pull-sha:
-    required: true
-    default: ${{ github.event.pull_request.base.sha }}
-  github-sha:
-    required: true
-    default: ${{ github.event.pull_request.head.sha }}
   github-token:
     required: true
     description: 'A github access token'

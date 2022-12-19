@@ -11110,7 +11110,8 @@ async function runJestCmd(changedFiles) {
     try {
         // Create jest command
         const changedFiledStr = changedFiles.join(' ');
-        const jestCmd = `npm test ${changedFiledStr} -- --ci --json --coverage --testLocationInResults --passWithNoTests --outputFile=${TEST_FILE_REPORT}`;
+        // const jestCmd = `npm test ${changedFiledStr} -- --ci --json --coverage --testLocationInResults --passWithNoTests --outputFile=${TEST_FILE_REPORT}`;
+        const jestCmd = `npm test -- --ci --json --coverage --changedSince=${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.base.ref} --testLocationInResults --passWithNoTests --outputFile=${TEST_FILE_REPORT}`;
         const options = {
             cwd: CWD
         }
@@ -11145,7 +11146,7 @@ async function printResult(results) {
         const payload = {
             ..._actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
             head_sha: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.head.sha ?? _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.sha,
-            name: "jest-github-action-test",
+            name: "jest-github-action",
             status: "completed",
             conclusion: results.success ? "success" : "failure",
             output: {

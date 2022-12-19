@@ -81,7 +81,8 @@ async function runJestCmd(changedFiles) {
     try {
         // Create jest command
         const changedFiledStr = changedFiles.join(' ');
-        const jestCmd = `npm test ${changedFiledStr} -- --ci --json --coverage --testLocationInResults --passWithNoTests --outputFile=${TEST_FILE_REPORT}`;
+        // const jestCmd = `npm test ${changedFiledStr} -- --ci --json --coverage --testLocationInResults --passWithNoTests --outputFile=${TEST_FILE_REPORT}`;
+        const jestCmd = `npm test -- --ci --json --coverage --changedSince=${context.payload.pull_request?.base.ref} --testLocationInResults --passWithNoTests --outputFile=${TEST_FILE_REPORT}`;
         const options = {
             cwd: CWD
         }
@@ -116,7 +117,7 @@ async function printResult(results) {
         const payload = {
             ...context.repo,
             head_sha: context.payload.pull_request?.head.sha ?? context.sha,
-            name: "jest-github-action-test",
+            name: "jest-github-action",
             status: "completed",
             conclusion: results.success ? "success" : "failure",
             output: {

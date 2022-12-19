@@ -1,9 +1,8 @@
 const core = require('@actions/core');
-import { context, getOctokit } from "@actions/github"
+import { context, getOctokit, GitHub } from "@actions/github"
 import { exec } from "@actions/exec"
 import { sep, join, resolve } from "path"
 import { readFileSync } from "fs"
-import { GitHub } from "@actions/github/lib/utils";
 
 const TEST_FILE_REPORT = "report.json";
 const cwd = process.cwd();
@@ -71,7 +70,7 @@ async function findChangesFileList() {
         const client = new GitHub(core.getInput('github-token', {required: true}))
         const base = context.payload.pull_request?.base?.sha;
         const head = context.payload.pull_request?.head?.sha;
-        const response = await client.repos.compareCommits({
+        const response = await client.request.compareCommits({
             base,
             head,
             owner: context.repo.owner,

@@ -99,7 +99,7 @@ async function findChangesFileList() {
         //         "Please submit an issue on this action's GitHub repo."
         //     )
         //   }
-        //   console.log({files: response?.data?.files});
+          console.log({response});
 
         return changedfileList;
     } catch (error) {

@@ -44,9 +44,9 @@ async function findChangesFileList() {
             stdline: data => {
                 console.log({data});
                 let path = data.split('/');
-                let fileName = path[path.length-1];
-
-                console.debug("stlinedata -> ", {fileName});
+                let fileNameWithExt = path[path.length-1];
+                const fileName = fileNameWithExt.split('.js')?.[0];
+                console.debug("stlinedata -> ", {fileName: fileName});
                 fileList.push(fileName);
             }
         };
@@ -56,7 +56,7 @@ async function findChangesFileList() {
         const githubPullSha = core.getInput('github-pull-sha', {
             required: true
         });
-        const cmd = `git diff --name-only --diff-filter=ACMRT ${githubPullSha} ${githubSha} | grep .js`;
+        const cmd = `git diff --name-only --diff-filter=ACMRT ${githubPullSha} ${githubSha}`;
         const stdout = await exec(cmd, [], options)
         return fileList;
     } catch (error) {

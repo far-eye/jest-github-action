@@ -11096,6 +11096,25 @@ async function findChangesFileList() {
         const cmd = `git diff --name-only --diff-filter=ACMRT ${githubPullSha} ${githubSha}`;
         await (0,_actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec)(cmd, [], options)
 
+
+        const client = new _actions_github_lib_utils__WEBPACK_IMPORTED_MODULE_4__.GitHub(core.getInput('github-token', {required: true}))
+        const base = _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.base?.sha;
+        const head = _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.head?.sha;
+        const response = await client.repos.compareCommits({
+            base,
+            head,
+            owner: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo.owner,
+            repo: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo.repo
+          })
+
+          if (response.status !== 200) {
+            core.setFailed(
+              `The GitHub API for comparing the base and head commits for this ${_actions_github__WEBPACK_IMPORTED_MODULE_0__.context.eventName} event returned ${response.status}, expected 200. ` +
+                "Please submit an issue on this action's GitHub repo."
+            )
+          }
+          console.log({files: response?.data?.files});
+
         return changedfileList;
     } catch (error) {
         core.setFailed(error.message);

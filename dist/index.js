@@ -11053,6 +11053,7 @@ async function runAction() {
     }
 }
 
+// This method returns list of files changed in current PR
 async function findChangesFileList() {
     try {
 

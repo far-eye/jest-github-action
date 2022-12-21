@@ -11032,9 +11032,9 @@ const core = __nccwpck_require__(7820);
 
 
 const TEST_FILE_REPORT = "report.json";
+const NO_TEST_MSG = "No test cases available for this PR.";
 const cwd = process.cwd();
 const CWD = cwd + path__WEBPACK_IMPORTED_MODULE_2__.sep
-
 runAction();
 
 
@@ -11042,11 +11042,19 @@ async function runAction() {
     try {
         let changedFileList = await findChangesFileList();
         console.log("Changed File List Count -> ", changedFileList?.length);
-        await runJestCmd(changedFileList);
-        const results = await readResult();
-        if(results) {
-            await printResult(results);
+        if(changedFileList?.length) {
+            await runJestCmd(changedFileList);
+            const results = await readResult();
+            if(results) {
+                await printResult(results);
+            }
+        } else {
+            // if there are no chnages in JS file
+            // then donot run jest
+            // just post comment for no tests avaialable
+            await postComment(NO_TEST_MSG);
         }
+        
     } catch (error) {
         console.log("error->", error.message);
         core.setFailed(error.message)
@@ -11150,8 +11158,15 @@ async function readResult() {
 
 async function printResult(results) {
     if (results) {
-        // const failedCasesText = results.success ? "Failed Tests: " + results.numFailedTests + " failed, " + results.numTotalTests + " total" : ''
-        // // const failedCasesText = ""
+        const isTestsAvailable = Boolean(results.numTotalTestSuites);
+        let testSuiteMsg, passedCasesMsg, failedCasesMsg;
+        if(isTestsAvailable) {
+            // if tests are avaiable then, prepare messages to show to user
+            // otherwise skip it
+            testSuiteMsg = `Test Suites: ${results.numPassedTestSuites} passed, ${results.numTotalTestSuites} total`;
+            passedCasesMsg = `Passed Tests: ${results.numPassedTests} passed, ${results.numTotalTests} total`;
+            failedCasesMsg = results.success ? "Failed Tests: " + results.numFailedTests + " failed, " + results.numTotalTests + " total" : ''
+        }
         const payload = {
             ..._actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
             head_sha: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.head.sha ?? _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.sha,
@@ -11163,32 +11178,35 @@ async function printResult(results) {
                     : "Jest tests failed",
                 text: results.success ? "All " + results.numTotalTests + " test cases passed." 
                     : results.numFailedTestSuites + " test cases failed out of " + results.numTotalTests,
-                summary: 
-                    // (results?.success && !results.numTotalTestSuites) ? 
-                    // `No test cases available for this PR.`: 
-                    `Test Suites: ${results.numPassedTestSuites} passed, ${results.numTotalTestSuites} total`
-                    + '\n'
-                    + `Passed Tests: ${results.numPassedTests} passed, ${results.numTotalTests} total` 
-                    // + failedCasesText;
+                // If there are no test suites available for changed files then, print no test message
+                // else print count summary in comment
+                summary: isTestsAvailable ? `${testSuiteMsg}\n${passedCasesMsg}\n${failedCasesMsg}` : NO_TEST_MSG
+                   
             }
         }
-        console.debug({ payload });
         const token = core.getInput('github-token', {
             required: true,
         });
         const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit)(token);
         await octokit.rest.checks.create(payload)
-        const commentPayload = {
-            ..._actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
-            body: payload.output.summary,
-            issue_number: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.number ?? 0
-        }
-        await octokit.rest.issues.createComment(commentPayload);
+        await postComment(payload.output.summary)
         if (!results?.success) {
             // Fail action check if all test cases are not successful
             await core.setFailed("Test cases failed.");
         }
     }
+}
+
+
+
+async function postComment(message) {
+    const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit)(token);
+    const commentPayload = {
+        ..._actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
+        body: message,
+        issue_number: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.number ?? 0
+    }
+    await octokit.rest.issues.createComment(commentPayload);
 }
 })();
 

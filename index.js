@@ -14,7 +14,7 @@ runAction();
 async function runAction() {
     try {
         let changedFileList = await findChangesFileList();
-        console.log("Changed File List -> ", changedFileList);
+        console.log("Changed File List Count -> ", changedFileList?.length);
         await runJestCmd(changedFileList);
         const results = await readResult();
         if(results) {
@@ -45,6 +45,10 @@ async function findChangesFileList() {
         // https://github.com/octokit/core.js#readme
         const octokit = getOctokit(token);
 
+        // Note - When calculating file changed in current PR, if there are more 300 files in the diff, response will only return 300 files. 
+        // To handle more than 300 file, we need to add pagination support in this API call
+        // For now pagination support is not added in this action.
+        // Refer this link for more details - https://docs.github.com/en/rest/commits/commits?apiVersion=2022-11-28#compare-two-commits
         // Compare base PR base branch commit and feature branch head commit
         const response = await octokit.request('GET /repos/{owner}/{repo}/compare/{basehead}', {
             owner,
@@ -57,17 +61,17 @@ async function findChangesFileList() {
                 "Please submit an issue on this action's GitHub repo."
             )
           }
-        const changedFileList = response?.data?.files?.map(file => {
-            let filePath = file.filename;
-            // For now below code will be executed for all file type
-            // ToDo: Run below code only for JS files by adding grep option in exec command
 
+        // Filter JS file and then remove .js extension from file name
+        const changedFileList = response?.data?.files?.(file => file.filename.endsWith('.js'))
+            .map(file => {
+            let filePath = file.filename;
             // Split path (For eg src/services/myservice.js will split into ['src', 'services', 'myservice.js']);
             let pathList = filePath.split(sep);
             // Extract fileName from last entry of path array
             let fileNameWithExt = pathList[pathList.length - 1];
-            // Remove extension from JS files
-            let fileName = fileNameWithExt.split('.js')?.[0];
+            // // Remove extension from JS files
+            // let fileName = fileNameWithExt.split('.js')?.[0];
             return fileName
         })
 
@@ -119,6 +123,8 @@ async function readResult() {
 
 async function printResult(results) {
     if (results) {
+        // const failedCasesText = results.success ? "Failed Tests: " + results.numFailedTests + " failed, " + results.numTotalTests + " total" : ''
+        // // const failedCasesText = ""
         const payload = {
             ...context.repo,
             head_sha: context.payload.pull_request?.head.sha ?? context.sha,
@@ -126,11 +132,17 @@ async function printResult(results) {
             status: "completed",
             conclusion: results.success ? "success" : "failure",
             output: {
-                title: results.success ? "Jest tests passed" : "Jest tests failed",
-                text: results.success ? "All " + results.numTotalTests + " test cases passed." : results.numFailedTestSuites + " test cases failed out of " + results.numTotalTests,
-                summary: `Test Suites: ${results.numPassedTestSuites} passed, ${results.numTotalTestSuites} total`
+                title: results.success ? "Jest tests passed" 
+                    : "Jest tests failed",
+                text: results.success ? "All " + results.numTotalTests + " test cases passed." 
+                    : results.numFailedTestSuites + " test cases failed out of " + results.numTotalTests,
+                summary: 
+                    // (results?.success && !results.numTotalTestSuites) ? 
+                    // `No test cases available for this PR.`: 
+                    `Test Suites: ${results.numPassedTestSuites} passed, ${results.numTotalTestSuites} total`
                     + '\n'
-                    + `Tests:       ${results.numPassedTests} passed, ${results.numTotalTests} total`
+                    + `Passed Tests: ${results.numPassedTests} passed, ${results.numTotalTests} total` 
+                    // + failedCasesText;
             }
         }
         console.debug({ payload });
@@ -147,7 +159,7 @@ async function printResult(results) {
         await octokit.rest.issues.createComment(commentPayload);
         if (!results?.success) {
             // Fail action check if all test cases are not successful
-            await core.setFailed("Test cases failing.");
+            await core.setFailed("Test cases failed.");
         }
     }
 }

@@ -138,7 +138,7 @@ async function printResult(results) {
             // otherwise skip it
             testSuiteMsg = `Test Suites: ${results.numPassedTestSuites} passed, ${results.numTotalTestSuites} total`;
             passedCasesMsg = `Passed Tests: ${results.numPassedTests} passed, ${results.numTotalTests} total`;
-            failedCasesMsg = results.success ? "Failed Tests: " + results.numFailedTests + " failed, " + results.numTotalTests + " total" : ''
+            failedCasesMsg = !results.success ? "Failed Tests: " + results.numFailedTests + " failed, " + results.numTotalTests + " total" : ''
         }
         const payload = {
             ...context.repo,

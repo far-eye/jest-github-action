@@ -9,6 +9,12 @@ then it will mark PR as failed
 
 If no test cases are pesent for any changed file, then it will mark PR as success. 
 
+**
+Note - When calculating file changed in current PR, if there are more 300 files in the diff, it will only pick 300 files. 
+For now pagination support is not added in this action.
+Refer this link for more details - https://docs.github.com/en/rest/commits/commits?apiVersion=2022-11-28#compare-two-commits
+**
+
 ## Example usage
 
 ```yaml

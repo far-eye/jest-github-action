@@ -11040,7 +11040,7 @@ runAction();
 
 async function runAction() {
     try {
-        let changedFileList = await findChangesFileList();
+        let changedFileList = await findChangedFileList();
         console.log("Changed File List Count -> ", changedFileList?.length);
         if(changedFileList?.length) {
             await runJestCmd(changedFileList);
@@ -11062,7 +11062,7 @@ async function runAction() {
 }
 
 // This method returns list of files changed in current PR
-async function findChangesFileList() {
+async function findChangedFileList() {
     try {
 
         // Get access token from input
@@ -11098,15 +11098,15 @@ async function findChangesFileList() {
           }
 
         // Filter JS file and then remove .js extension from file name
-        const changedFileList = response?.data?.files?.filter(file => file.filename.endsWith('.js'))
-            .map(file => {
+        const filteredList = response?.data?.files?.filter(file => file.filename.endsWith('.js'));
+        const changedFileList = filteredList.map(file => {
             let filePath = file.filename;
             // Split path (For eg src/services/myservice.js will split into ['src', 'services', 'myservice.js']);
             let pathList = filePath.split(path__WEBPACK_IMPORTED_MODULE_2__.sep);
             // Extract fileName from last entry of path array
             let fileNameWithExt = pathList[pathList.length - 1];
             // // Remove extension from JS files
-            // let fileName = fileNameWithExt.split('.js')?.[0];
+            let fileName = fileNameWithExt.split('.js')?.[0];
             return fileName
         })
 

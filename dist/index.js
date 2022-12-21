@@ -11035,11 +11035,12 @@ const TEST_FILE_REPORT = "report.json";
 const NO_TEST_MSG = "No test cases available for this PR.";
 const cwd = process.cwd();
 const CWD = cwd + path__WEBPACK_IMPORTED_MODULE_2__.sep
-runAction();
 
+runAction();
 
 async function runAction() {
     try {
+        // Get list of file changed - JS only
         let changedFileList = await findChangedFileList();
         console.log("Changed File List Count -> ", changedFileList?.length);
         if(changedFileList?.length) {
@@ -11062,6 +11063,7 @@ async function runAction() {
 }
 
 // This method returns list of files changed in current PR
+// Note - This method will only return JS fle with extension as .js
 async function findChangedFileList() {
     try {
 

@@ -173,6 +173,9 @@ async function printResult(results) {
 
 
 async function postComment(message) {
+    const token = core.getInput('github-token', {
+        required: true,
+    });
     const octokit = getOctokit(token);
     const commentPayload = {
         ...context.repo,

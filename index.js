@@ -63,7 +63,7 @@ async function findChangesFileList() {
           }
 
         // Filter JS file and then remove .js extension from file name
-        const changedFileList = response?.data?.files?.(file => file.filename.endsWith('.js'))
+        const changedFileList = response?.data?.files?.filter(file => file.filename.endsWith('.js'))
             .map(file => {
             let filePath = file.filename;
             // Split path (For eg src/services/myservice.js will split into ['src', 'services', 'myservice.js']);

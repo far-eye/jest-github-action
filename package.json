@@ -1,5 +1,5 @@
 {
-  "name": "hello-world-javascript-action",
+  "name": "jest-github-action",
   "version": "1.99.927",
   "main": "index.js",
   "scripts": {},

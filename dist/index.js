@@ -11032,21 +11032,30 @@ const core = __nccwpck_require__(7820);
 
 
 const TEST_FILE_REPORT = "report.json";
+const NO_TEST_MSG = "No test cases available for this PR.";
 const cwd = process.cwd();
 const CWD = cwd + path__WEBPACK_IMPORTED_MODULE_2__.sep
 
 runAction();
 
-
 async function runAction() {
     try {
-        let changedFileList = await findChangesFileList();
-        console.log("Changed File List -> ", changedFileList);
-        await runJestCmd(changedFileList);
-        const results = await readResult();
-        if(results) {
-            await printResult(results);
+        // Get list of file changed - JS only
+        let changedFileList = await findChangedFileList();
+        console.log("Changed File List Count -> ", changedFileList?.length);
+        if(changedFileList?.length) {
+            await runJestCmd(changedFileList);
+            const results = await readResult();
+            if(results) {
+                await printResult(results);
+            }
+        } else {
+            // if there are no chnages in JS file
+            // then donot run jest
+            // just post comment for no tests avaialable
+            await postComment(NO_TEST_MSG);
         }
+        
     } catch (error) {
         console.log("error->", error.message);
         core.setFailed(error.message)
@@ -11054,7 +11063,8 @@ async function runAction() {
 }
 
 // This method returns list of files changed in current PR
-async function findChangesFileList() {
+// Note - This method will only return JS fle with extension as .js
+async function findChangedFileList() {
     try {
 
         // Get access token from input
@@ -11072,6 +11082,10 @@ async function findChangesFileList() {
         // https://github.com/octokit/core.js#readme
         const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit)(token);
 
+        // Note - When calculating file changed in current PR, if there are more 300 files in the diff, response will only return 300 files. 
+        // To handle more than 300 file, we need to add pagination support in this API call
+        // For now pagination support is not added in this action.
+        // Refer this link for more details - https://docs.github.com/en/rest/commits/commits?apiVersion=2022-11-28#compare-two-commits
         // Compare base PR base branch commit and feature branch head commit
         const response = await octokit.request('GET /repos/{owner}/{repo}/compare/{basehead}', {
             owner,
@@ -11084,16 +11098,16 @@ async function findChangesFileList() {
                 "Please submit an issue on this action's GitHub repo."
             )
           }
-        const changedFileList = response?.data?.files?.map(file => {
-            let filePath = file.filename;
-            // For now below code will be executed for all file type
-            // ToDo: Run below code only for JS files by adding grep option in exec command
 
+        // Filter JS file and then remove .js extension from file name
+        const filteredList = response?.data?.files?.filter(file => file.filename.endsWith('.js'));
+        const changedFileList = filteredList.map(file => {
+            let filePath = file.filename;
             // Split path (For eg src/services/myservice.js will split into ['src', 'services', 'myservice.js']);
             let pathList = filePath.split(path__WEBPACK_IMPORTED_MODULE_2__.sep);
             // Extract fileName from last entry of path array
             let fileNameWithExt = pathList[pathList.length - 1];
-            // Remove extension from JS files
+            // // Remove extension from JS files
             let fileName = fileNameWithExt.split('.js')?.[0];
             return fileName
         })
@@ -11146,6 +11160,15 @@ async function readResult() {
 
 async function printResult(results) {
     if (results) {
+        const isTestsAvailable = Boolean(results.numTotalTestSuites);
+        let testSuiteMsg, passedCasesMsg, failedCasesMsg;
+        if(isTestsAvailable) {
+            // if tests are avaiable then, prepare messages to show to user
+            // otherwise skip it
+            testSuiteMsg = `Test Suites: ${results.numPassedTestSuites} passed, ${results.numTotalTestSuites} total`;
+            passedCasesMsg = `Passed Tests: ${results.numPassedTests} passed, ${results.numTotalTests} total`;
+            failedCasesMsg = !results.success ? "Failed Tests: " + results.numFailedTests + " failed, " + results.numTotalTests + " total" : ''
+        }
         const payload = {
             ..._actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
             head_sha: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.head.sha ?? _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.sha,
@@ -11153,30 +11176,42 @@ async function printResult(results) {
             status: "completed",
             conclusion: results.success ? "success" : "failure",
             output: {
-                title: results.success ? "Jest tests passed" : "Jest tests failed",
-                text: results.success ? "All " + results.numTotalTests + " test cases passed." : results.numFailedTestSuites + " test cases failed out of " + results.numTotalTests,
-                summary: `Test Suites: ${results.numPassedTestSuites} passed, ${results.numTotalTestSuites} total`
-                    + '\n'
-                    + `Tests:       ${results.numPassedTests} passed, ${results.numTotalTests} total`
+                title: results.success ? "Jest tests passed" 
+                    : "Jest tests failed",
+                text: results.success ? "All " + results.numTotalTests + " test cases passed." 
+                    : results.numFailedTestSuites + " test cases failed out of " + results.numTotalTests,
+                // If there are no test suites available for changed files then, print no test message
+                // else print count summary in comment
+                summary: isTestsAvailable ? `${testSuiteMsg}\n${passedCasesMsg}\n${failedCasesMsg}` : NO_TEST_MSG
+                   
             }
         }
-        console.debug({ payload });
         const token = core.getInput('github-token', {
             required: true,
         });
         const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit)(token);
         await octokit.rest.checks.create(payload)
-        const commentPayload = {
-            ..._actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
-            body: payload.output.summary,
-            issue_number: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.number ?? 0
-        }
-        await octokit.rest.issues.createComment(commentPayload);
+        await postComment(payload.output.summary)
         if (!results?.success) {
             // Fail action check if all test cases are not successful
-            await core.setFailed("Test cases failing.");
+            await core.setFailed("Test cases failed.");
         }
     }
+}
+
+
+
+async function postComment(message) {
+    const token = core.getInput('github-token', {
+        required: true,
+    });
+    const octokit = (0,_actions_github__WEBPACK_IMPORTED_MODULE_0__.getOctokit)(token);
+    const commentPayload = {
+        ..._actions_github__WEBPACK_IMPORTED_MODULE_0__.context.repo,
+        body: message,
+        issue_number: _actions_github__WEBPACK_IMPORTED_MODULE_0__.context.payload.pull_request?.number ?? 0
+    }
+    await octokit.rest.issues.createComment(commentPayload);
 }
 })();
 

@@ -1,6 +1,6 @@
 {
-  "name": "hello-world-javascript-action",
-  "version": "1.99.920",
+  "name": "jest-github-action",
+  "version": "2.0.0",
   "main": "index.js",
   "scripts": {},
   "repository": {

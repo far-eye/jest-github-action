@@ -1,6 +1,6 @@
 {
   "name": "jest-github-action",
-  "version": "1.99.927",
+  "version": "2.0.0",
   "main": "index.js",
   "scripts": {},
   "repository": {
